@@ -4,7 +4,7 @@
         <SelectionSet>
             <Name>DefaultView</Name>
             <Types>
-                <TypeName>Flex.Smoothlake.FlexLib.Radio</TypeName>
+                <TypeName>Flex.Smoothlake.FlexLib.Slice</TypeName>
             </Types>
         </SelectionSet>
     </SelectionSets>
@@ -19,13 +19,13 @@
                 <SelectionSetName>DefaultView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Model</PropertyName> 
+                <PropertyName>Index</PropertyName> 
                 <CustomControlName>DefaultView-GroupingFormat</CustomControlName>  
             </GroupBy>
             <TableControl>
                 <TableHeaders>
                    <TableColumnHeader>
-                      <Label>Model</Label>
+                      <Label>Index</Label>
                       <Width>15</Width>
                       <Alignment>left</Alignment>
                    </TableColumnHeader>
@@ -55,7 +55,7 @@
                         <Wrap/>
                         <TableColumnItems>
                             <TableColumnItem>
-                                <PropertyName>Model</PropertyName>
+                                <PropertyName>Index</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Serial</PropertyName>
@@ -80,18 +80,18 @@
                 <SelectionSetName>DefaultView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Model</PropertyName> 
+                <PropertyName>Index</PropertyName> 
                 <CustomControlName>DefaultView-GroupingFormat</CustomControlName>  
             </GroupBy>
             <ListControl>
                 <ListEntries>
                     <ListEntry>
                         <EntrySelectedBy>
-                            <TypeName>Flex.Smoothlake.FlexLib.Radio</TypeName>
+                            <TypeName>Flex.Smoothlake.FlexLib.Slice</TypeName>
                         </EntrySelectedBy>
                         <ListItems>
                             <ListItem>
-                                <PropertyName>Model</PropertyName>
+                                <PropertyName>Index</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>Serial</PropertyName>
@@ -110,7 +110,7 @@
                     <ListEntry>
                         <ListItems>
                             <ListItem>
-                                <PropertyName>Model</PropertyName>
+                                <PropertyName>Index</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>Serial</PropertyName>
@@ -120,6 +120,9 @@
                             </ListItem>
                             <ListItem>
                                 <PropertyName>Connected</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>Callsign</PropertyName>
                             </ListItem>
                         </ListItems>
                     </ListEntry>
@@ -132,100 +135,27 @@
                 <SelectionSetName>DefaultView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Model</PropertyName> 
+                <PropertyName>Index</PropertyName> 
                 <CustomControlName>DefaultView-GroupingFormat</CustomControlName>  
             </GroupBy>
             <WideControl>
                 <WideEntries>
                     <WideEntry>
                         <WideItem>
-                            <PropertyName>Model</PropertyName>
+                            <PropertyName>Index</PropertyName>
                         </WideItem>
                     </WideEntry>
                     <WideEntry>
                         <EntrySelectedBy>
-                            <TypeName>Flex.Smoothlake.FlexLib.Radio</TypeName>
+                            <TypeName>Flex.Smoothlake.FlexLib.Slice</TypeName>
                         </EntrySelectedBy>
                         <WideItem>
-                            <PropertyName>Model</PropertyName>
+                            <PropertyName>Index</PropertyName>
                             <FormatString>[{0}]</FormatString>
                         </WideItem>
                     </WideEntry>
                 </WideEntries>
             </WideControl>
         </View>
-        <View>
-            <Name>FileSecurityTable</Name>
-            <ViewSelectedBy>
-                <TypeName>System.Security.AccessControl.FileSystemSecurity</TypeName>
-            </ViewSelectedBy>
-            <GroupBy>
-                <PropertyName>Model</PropertyName> 
-                <CustomControlName>DefaultView-GroupingFormat</CustomControlName>  
-            </GroupBy>
-            <TableControl>
-                <TableHeaders>
-                   <TableColumnHeader>
-                      <Label>Path</Label>
-                   </TableColumnHeader>
-                   <TableColumnHeader />
-                   <TableColumnHeader>
-                      <Label>Access</Label>
-                   </TableColumnHeader>
-                </TableHeaders>
-                <TableRowEntries>
-                    <TableRowEntry>
-                        <TableColumnItems>
-                            <TableColumnItem>
-                                <ScriptBlock>
-                                    split-path $_.Path -leaf
-                                </ScriptBlock>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                            <PropertyName>Owner</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <ScriptBlock>
-                                    $_.AccessToString
-                                </ScriptBlock>
-                            </TableColumnItem>
-                        </TableColumnItems>
-                    </TableRowEntry>
-                </TableRowEntries>
-            </TableControl>
-        </View>
-       <View>
-            <Name>FileSystemStream</Name>
-            <ViewSelectedBy>
-                <TypeName>Microsoft.PowerShell.Commands.AlternateStreamData</TypeName>
-            </ViewSelectedBy>
-            <GroupBy>
-                <PropertyName>Filename</PropertyName> 
-            </GroupBy>
-            <TableControl>
-                <TableHeaders>
-                   <TableColumnHeader>
-                      <Width>20</Width>
-                      <Alignment>left</Alignment>
-                   </TableColumnHeader>
-                    <TableColumnHeader>
-                        <Width>10</Width>
-                        <Alignment>right</Alignment>
-                    </TableColumnHeader>
-                </TableHeaders>
-                <TableRowEntries>
-                    <TableRowEntry>
-                        <TableColumnItems>
-                            <TableColumnItem>
-                                <PropertyName>Stream</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>IP</PropertyName>
-                            </TableColumnItem>
-                        </TableColumnItems>
-                    </TableRowEntry>
-                </TableRowEntries>
-            </TableControl>
-        </View>          
     </ViewDefinitions>
 </Configuration>

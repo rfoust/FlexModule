@@ -1,329 +1,12 @@
 
 . $PSScriptRoot\get-packet.ps1
+. $PSScriptRoot\FlexPacket.ps1
+. $PSScriptRoot\FlexLib.ps1
 
-function get-flexlatestfolderpath
-	{
-	$flexRoot = "c:\program files\FlexRadio Systems"
-
-	if (test-path $flexRoot)
-		{
-		$dirs = gci $flexRoot
-
-		if (-not $dirs)
-			{
-			throw "Unable to locate FlexRadio SmartSDR installation path!"
-			}
-
-		$modifiedDirs = @()
-
-		foreach ($dir in $dirs)
-			{
-			$rootName,$fullVersion,$null = $dir.name -split " "
-
-			if ($fullVersion)
-				{
-				$flexVersion = [version]($fullVersion -replace "v","")
-
-				$modifiedDir = $dir | add-member NoteProperty Version $flexVersion -passthru
-
-				$modifiedDirs += $modifiedDir
-				}
-			}
-
-		if ($modifiedDirs)
-			{
-			($modifiedDirs | sort Version -desc)[0].fullname
-			}
-		}
-	}
-
-function get-flexlibpath
-	{
-	$latestPath = get-flexlatestfolderpath
-
-	if ($latestPath)
-		{
-		$latestpath + "\FlexLib.dll"
-		}
-	}
-
-function import-flexlib
-	{
-	$flexLibPath = get-flexlibpath
-
-	if ($flexLibPath)
-		{
-		try
-			{
-			[void][reflection.assembly]::GetAssembly([flex.smoothlake.FlexLib.api])
-			}
-		catch [system.exception]
-			{
-			add-type -path $flexLibPath
-			}
-		}
-	else
-		{
-	    throw "Unable to locate FlexRadio FlexLib library!"
-		}
-
-	[flex.smoothlake.FlexLib.api]::init()
-	}
+# todo: send "exit reboot" to reboot radio.
 
 import-flexlib
 
-function displayTime
-	{
-	$now = get-date -format "HH:mm:ss"
-
-	write-host "[" -foregroundcolor green -nonewline
-	write-host $now -foregroundcolor gray -nonewline
-	write-host "]" -foregroundcolor green -nonewline
-	# write-host " : " -foregroundcolor white -nonewline
-	}
-
-function displaySource ([string]$source, [int]$pad = 15)
-	{
-
-	$source = $source.padleft($pad)
-
-	switch -wildcard ($source)
-		{
-		"*Radio"
-			{
-			$foreColor = "magenta"
-			break
-			}
-		"*Local"
-			{
-			$foreColor = "cyan"
-			break
-			}
-		"*RadioResponse"
-			{
-			$foreColor = "yellow"
-			break
-			}
-		"*RadioStatus"
-			{
-			$foreColor = "blue"
-			break
-			}
-		"*RadioMessage"
-			{
-			$foreColor = "green"
-			break
-			}
-		"`*"
-			{
-			$foreColor = "cyan"
-			break
-			}
-		default
-			{
-			$foreColor = "gray"
-			break
-			}
-		}
-	
-	write-host $source -foregroundcolor $foreColor -nonewline
-	write-host " : " -foregroundcolor  white -nonewline
-	}
-
-function displayData ([string]$data)
-	{
-	$consoleWidth = $host.ui.rawui.windowsize.width
-	$leftPad = 28	# 10 for date/time, 15 for source + padding + extra stuff
-	#$dataLength = $data.length 
-	$maxDataWidth = $consoleWidth - $leftPad - 2	# the 3 is for the " : " in the prefix string, and subtract one for a right pad
-
-	$firstLine = $true
-	$dataStringIndex = 0		#starting point
-	$processing = $true
-
-	while ($processing)
-		{
-		if ($firstLine)
-			{
-			if (($maxDataWidth -ge $data.length) -or ($dataStringIndex -gt $data.length))
-				{
-				$outputString = $data
-				$processing = $false
-				}
-			else
-				{
-				$outputString = $data.substring($dataStringIndex,$maxDataWidth)
-				$dataStringIndex = $dataStringIndex + $maxDataWidth
-				}
-			}
-		else
-			{
-			if (($maxDataWidth -ge ($data.length - ($dataStringIndex + 1))) -or ($dataStringIndex -gt $data.length))
-				{
-				$outputString = $data.substring($dataStringIndex,$data.length - ($dataStringIndex))
-				$processing = $false
-				}
-			else
-				{
-				$outputString = $data.substring($dataStringIndex,$maxDataWidth)
-				$dataStringIndex = $dataStringIndex + $maxDataWidth
-				}
-			}
-
-		if ($firstLine)
-			{
-			write-host $outputString -foregroundcolor gray
-			$firstLine = $false
-			}
-		else
-			{
-			write-host (" : ").padleft($leftPad) -foregroundcolor white -nonewline
-			write-host $outputString -foregroundcolor gray
-			}
-		}
-	}
-
-function get-flexpacket
-	{
-	$smartSDRdetected = $false
-	$SmartSDRVersion = (get-process | ? { $_.processname -match "SmartSDR" }).productversion
-
-	if ($SmartSDRVersion)
-		{
-		displayTime
-		displaySource "*"
-		write-host "SmartSDR detected, version $SmartSDRVersion." -foregroundcolor cyan
-		$smartSDRdetected = $true
-		}
-
-	$remoteIP = (get-flexradio).ip
-
-	if (-not $remoteIP)
-		{
-		throw "Unable to locate FlexRadio IP address!"
-		}
-
-	$fragment = $null
-	$fragmentFound = $false
-
-	#get-packet | ? { ($_.source -eq "192.168.1.133" -or $_.destination -eq "192.168.1.133") -and ($_.protocol -eq "TCP")} | % {
-	get-packet -protocol flex -remoteIP $remoteIP | % {
-		$packet = $_
-
-		if ((-not $packet) -or ($packet.length -le 0))
-			{
-			continue
-			}
-
-		if ($smartSDRdetected -eq $false)
-			{
-			$SmartSDRVersion = (get-process | ? { $_.processname -match "SmartSDR" }).productversion
-
-			if ($SmartSDRVersion)
-				{
-				displayTime
-				displaySource "*"
-				write-host "SmartSDR detected, version $SmartSDRVersion." -foregroundcolor cyan
-				$smartSDRdetected = $true
-				}
-			}
-
-		if ($fragmentFound)
-			{
-			$newData = ($packet -split '\n')[0]
-			$newDataComplete = $fragment + $newData
-
-			$packet = $packet -replace [regex]::Escape($newData),$newDataComplete
-
-			$fragmentFound = $false
-			}
-
-		if ($packet -notmatch '\Z\n')
-			{
-			$fragment = "`n" + ($packet -split '\n')[-1]
-
-			if ($fragment -ne "`n")
-				{
-				$packet = $packet -replace [regex]::Escape($fragment),''
-
-				$fragmentFound = $true
-				}
-			}
-
-		$packet -split '\n' | % { $_ -replace '^\x00*','' } | ? { $_ -ne "" -and $_ -ne $null } | % {
-
-			$packetdata = $_
-
-			$prefix = $packetdata[0]
-
-			if ($packetdata)
-				{
-				[string]$packetSubData = $packetdata.substring(1)
-				}
-
-			switch ($prefix)
-				{
-				"V"
-					{
-					displayTime
-					displaySource "Radio"
-					write-host "Version $($packetSubData)" -foregroundcolor green
-					break
-					}
-				"H"
-					{
-					displayTime
-					displaySource "Radio"
-					write-host "Handle received: $($packetSubData)" -foreground green
-					break
-					}
-				"C"	# command sent
-					{
-					displayTime
-					displaySource "Local"
-					$sequence,$command = $packetSubData.split("|")
-					displayData "#$sequence - $command"
-					break
-					}
-				"R"
-					{
-					displayTime
-					displaySource "RadioResponse"
-					$sequence,$command = $packetSubData.split("|")
-					displayData "#$sequence - $command"
-					break
-					}
-				"S"
-					{
-					displayTime
-					displaySource "RadioStatus"
-					$handle,$command = $packetSubData.split("|")
-					displayData "($handle) - $command"
-					break
-					}
-				"M"
-					{
-					displayTime
-					displaySource "RadioMessage"
-					$handle,$command = $packetSubData.split("|")
-
-					#switch ($handle)
-					#	{
-					#	# decode message number for severity
-					#	}
-					write-host "$command"
-					break
-					}
-				default
-					{
-					displayTime
-					displaySource "Fragment"
-					displayData "$packetData"
-					}
-				}
-			}
-		}
-	}
 
 # note: serial number (property name "serial") should be the primary identifier for each radio
 # there is a global variable $global:flexradios that will contain all flex radios found
@@ -375,9 +58,13 @@ function get-flexradio
 			{
 			$global:FlexRadios | ? { $_.serial -eq $SerialNumber }
 			}
-		else
+		elseif ($global:FlexRadios)
 			{
-		    $global:FlexRadios
+			# using for loop to prevent modified collection exception when using pipeline
+			for ($i = 0; $i -lt $global:FlexRadios.count; $i++)
+				{
+		    	$global:FlexRadios[$i]
+		    	}
 			}
 		}
 
@@ -432,28 +119,39 @@ function connect-flexradio
 		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
-		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
-		[ValidateScript({$_.serial})]  # must have serial number
-		$RadioObject
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
+		[string]$serialNumber
 		)
 
 	begin { }
 
 	process 
 		{
-		foreach ($radio in $RadioObject)
+		if (-not $serialNumber)
 			{
-			if ($radio -eq $null)
+			if ($global:FlexRadios.count -eq 1)
+				{
+				write-verbose "One FlexRadio found. Using it."
+				$serialNumber = $global:FlexRadios[0].serial
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+				}
+			}
+
+		foreach ($radio in $serialNumber)
+			{
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+
+			write-verbose "Serial: $($radioObj.serial)"
+
+			if (-not $radioObj.serial)
 				{
 				continue
 				}
 
-			if (-not ($indexObj = $radio | findFlexRadioIndexNumber))
-				{
-				throw "Lost source radio object, try running get-flexradio again."
-				}
-
-			$result = $global:flexradios[$indexObj.index].connect()
+			$result = $radioObj.connect()
 
 			if ($result -eq $false)
 				{
@@ -465,9 +163,9 @@ function connect-flexradio
 
 				while ($count -lt 5)
 					{
-					if ($global:flexradios[$indexObj.index].Connected -eq $true)
+					if ($radioObj.Connected -eq $true)
 						{
-						$global:flexradios[$indexObj.index]
+						$radioObj
 
 						break
 						}
@@ -487,52 +185,62 @@ function disconnect-flexradio
 		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
-		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
-		[ValidateScript({$_.serial})]  # must have serial number
-		$RadioObject
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
+		[string]$serialNumber
 		)
 
 	begin { }
 
 	process 
 		{
-		foreach ($radio in $RadioObject)
+		if (-not $serialNumber)
 			{
-			if (($radio -eq $null) -or ($radio -eq ""))
+			if ($global:FlexRadios.count -eq 1)
+				{
+				write-verbose "One FlexRadio found. Using it."
+				$serialNumber = $global:FlexRadios[0].serial
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+				}
+			}
+
+		foreach ($radio in $serialNumber)
+			{
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+
+			write-verbose "Serial: $($radioObj.serial)"
+
+			if (-not $radioObj.serial)
 				{
 				continue
 				}
 
-			if (-not ($indexObj = $radio | findFlexRadioIndexNumber))
-				{
-				throw "Lost source radio object, try running get-flexradio again."
-				}
+			write-verbose "Disconnecting radio ..."
+			$radioObj.disconnect()
 
-			$global:flexradios[$indexObj.index].disconnect()
-
+			start-sleep -milliseconds 500
+			$count = 0
 			while ($count -lt 5)
 				{
-				if ($global:flexradios[$indexObj.index].Connected -eq $false)
+				if ($radioObj.Connected -eq $false)
 					{
-					$global:flexradios[$indexObj.index]
+					write-verbose "Radio disconnected."
+					$radioObj
 
 					break
 					}
 
 				$count++
+				start-sleep -milliseconds 500
 				}
-
 			}
 		}
 
 	end { }
 	}
 
-	
-function get-flexsetting
-	{
-	$radio | gm | ? { $_.membertype -eq "Property" }
-	}
 
 function get-FlexSliceReceiver
 	{
@@ -540,57 +248,193 @@ function get-FlexSliceReceiver
 		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
-		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
-		[ValidateScript({$_.serial})]  # must have serial number
-		$RadioObject
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
+		[string]$serial
 		)
 
 	begin { }
 
 	process 
 		{
-		foreach ($radio in $RadioObject)
+		if (-not $serialNumber)
 			{
-			if ($radio -eq $null)
+			if ($global:FlexRadios.count -eq 1)
+				{
+				write-verbose "One FlexRadio found. Using it."
+				$serialNumber = $global:FlexRadios[0].serial
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+				}
+			}
+
+		foreach ($radio in $serialNumber)
+			{
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+
+			write-verbose "Serial: $($radioObj.serial)"
+
+			if (-not $radioObj.serial)
 				{
 				continue
 				}
+			
+			write-verbose "Radio connected: $($radioObj.connected)"
 
-			if (-not ($indexObj = $radio | findFlexRadioIndexNumber))
+			if ($radioObj.Connected -eq $false)
 				{
-				throw "Lost source radio object, try running get-flexradio again."
+				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use connect-flexradio to establish a new connection."
 				}
 
-			$global:slicereceivers = @()
-
-			for ($SliceIndex = 0; $SliceIndex -le 8; $SliceIndex++)
+			if (-not $radioObj.slicelist)
 				{
-				write-verbose "Searching index $SliceIndex"
-
-				$global:slicereceivers += $global:flexradios[$indexObj.index].FindSliceByIndex($SliceIndex)
+				write-warning "No slices found! SmartSDR may not be running."
 				}
 
-			$global:slicereceivers
+			$radioObj.slicelist
 			}
 		}
 
 	end { }
 	}
 
-	function get-FlexPanadapter
+function get-FlexPanadapter
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
 		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
-		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
-		[ValidateScript({$_.serial})]  # must have serial number
-		$RadioObject
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
+		[string]$serial
 		)
 
 	begin { }
 
 	process 
+		{
+		if (-not $serialNumber)
+			{
+			if ($global:FlexRadios.count -eq 1)
+				{
+				write-verbose "One FlexRadio found. Using it."
+				$serialNumber = $global:FlexRadios[0].serial
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+				}
+			}
+
+		foreach ($radio in $serialNumber)
+			{
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+
+			write-verbose "Serial: $($radioObj.serial)"
+
+			if (-not $radioObj.serial)
+				{
+				continue
+				}
+			
+			write-verbose "Radio connected: $($radioObj.connected)"
+
+			if ($radioObj.Connected -eq $false)
+				{
+				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use connect-flexradio to establish a new connection."
+				}
+
+			if (-not $radioObj.panadapterlist)
+				{
+				write-warning "No panadapters found! SmartSDR may not be running."
+				}
+
+			$radioObj.panadapterlist
+			}
+		}
+
+	end { }
+	}
+
+function set-FlexSliceReceiver
+	{
+	[CmdletBinding(DefaultParameterSetName="p0",
+		SupportsShouldProcess=$true,
+		ConfirmImpact="Low")]
+	param(
+		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+		[string]$serial,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$Lock
+
+		)
+
+	begin { }
+
+	process
+		{
+		if (-not $serialNumber)
+			{
+			if ($global:FlexRadios.count -eq 1)
+				{
+				$radioObject = $global:FlexRadios[0]
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+				}
+			}
+		else
+			{
+		    $radioObject = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+			}
+
+		foreach ($radio in $RadioObject)
+			{
+			if ($radio -eq $null)
+				{
+				continue
+				}
+
+			if ($radio.Connected -eq $false)
+				{
+				throw "Not connected to $($radio.model): $($radio.serial). Use connect-flexradio or get-flexradio | connect-flexradio to establish a new connection."
+				}
+
+			if (-not ($indexObj = $radio | findFlexRadioIndexNumber))
+				{
+				throw "Lost source radio object, try running get-flexradio again."
+				}
+
+			if ($PSBoundParameters.ContainsKey('Lock') -and ($Lock -ne $radio.Lock))
+				{
+				$global:FlexRadios[$indexObj.index].set_Lock($Lock)
+				}
+			}
+		}
+
+	end { }
+	}
+
+function set-FlexPanadapter
+	{
+	[CmdletBinding(DefaultParameterSetName="p0",
+		SupportsShouldProcess=$true,
+		ConfirmImpact="Low")]
+	param(
+		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipeline = $true)]
+		[ValidateScript({$_.serial})]  # must have serial number
+		$RadioObject,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$ACCOn
+
+		)
+
+	begin { }
+
+	process
 		{
 		foreach ($radio in $RadioObject)
 			{
@@ -599,39 +443,28 @@ function get-FlexSliceReceiver
 				continue
 				}
 
+			if ($radio.Connected -eq $false)
+				{
+				throw "Not connected to $($radio.model): $($radio.serial). Use connect-flexradio or get-flexradio | connect-flexradio to establish a new connection."
+				}
+
 			if (-not ($indexObj = $radio | findFlexRadioIndexNumber))
 				{
 				throw "Lost source radio object, try running get-flexradio again."
 				}
 
-			# refresh slice receiver list
-			[void](get-FlexSliceReceiver)
-
-			$global:panadapters = @()
-
-			$streamIDs = @()
-
-			foreach ($slice in $global:slicereceivers)
+			if ($PSBoundParameters.ContainsKey('AccOn') -and ($ACCOn -ne $radio.AccOn))
 				{
-				if ($slice -eq $null)
-					{
-					continue
-					}
-
-				if ($streamIDs -notcontains $slice.PanadapterStreamID)
-					{
-					$global:panadapters += $slice.panadapter
-
-					$streamIDs += $slice.PanadapterStreamID
-					}
+				$global:FlexRadios[$indexObj.index].set_AccOn($AccOn)
 				}
-
-			$global:panadapters
 			}
 		}
 
 	end { }
 	}
+
+
+# profile functions need to be rewritten - flex added support for saved profiles since this was written
 
 function get-FlexProfile
 	{
@@ -782,33 +615,406 @@ function set-FlexRadio
 		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
-		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipeline = $true)]
-		[ValidateScript({$_.serial})]  # must have serial number
-		$RadioObject,
+		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipelineByPropertyName = $true)]
+		[string]$serialNumber,
 
 		[Parameter(ParameterSetName="p0",Position=0)]
-		[bool]$ACCOn
+		[bool]$ACCOn,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$AMCarrierLevel,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$APFGain,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$APFMode,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$APFQFactor,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[string]$Callsign,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$CompanderLevel,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$CompanderOn,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$CWBreakIn,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$CWDelay,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$CWIambic,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$CWIambicModeA,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$CWIambicModeB,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$CWPitch,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$CWSpeed,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$CWSwapPaddles,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$DelayTX,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[string]$DAXOn,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$HeadphoneGain,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$HeadphoneMute,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$HWAlcEnabled,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$LineoutGain,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$LineoutMute,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$MetInRX,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$MicBias,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$MicBoost,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$MicLevel,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$Mox,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[string]$Nickname,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$RemoteOnEnabled,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$RFPower,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[string]$Screensaver,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$ShowTxInWaterfall,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$SnapTune,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$TNFEnabled,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$TunePower,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$TXReqACCEnabled,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$TXReqACCPolarity,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$TXReqRCAEnabled,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[bool]$TXReqRCAPolarity
+
 		)
 
 	begin { }
 
 	process 
 		{
-		foreach ($radio in $RadioObject)
+		if (-not $serialNumber)
 			{
-			if ($radio -eq $null)
+			if ($global:FlexRadios.count -eq 1)
+				{
+				write-verbose "One FlexRadio found. Using it."
+				$serial = $global:FlexRadios[0].serial
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+				}
+			}
+
+		foreach ($radio in $serialNumber)
+			{
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+
+			write-verbose "Serial: $($radioObj.serial)"
+
+			if (-not $radioObj.serial)
 				{
 				continue
 				}
+			
+			write-verbose "Radio connected: $($radioObj.connected)"
 
-			if (-not ($indexObj = $radio | findFlexRadioIndexNumber))
+			if ($radioObj.Connected -eq $false)
 				{
-				throw "Lost source radio object, try running get-flexradio again."
+				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use connect-flexradio to establish a new connection."
 				}
 
-			if ($PSBoundParameters.ContainsKey('AccOn') -and ($ACCOn -ne $radio.AccOn))
+			if ($PSBoundParameters.ContainsKey('AccOn') -and ($ACCOn -ne $radioObj.AccOn))
 				{
-				$global:FlexRadios[$indexObj.index].set_AccOn($AccOn)
+				$radioObj.set_AccOn($AccOn)
+				}
+
+			if ($PSBoundParameters.ContainsKey('AMCarrierLevel') -and ($AMCarrierLevel -ne $radioObj.AMCarrierLevel))
+				{
+				if ($AMCarrierLevel -lt 0) { $AMCarrierLevel = 0 }
+				if ($AMCarrierLevel -gt 100) { $AMCarrierLevel = 100 }
+
+				$radioObj.set_AMCarrierLevel($AMCarrierLevel)
+				}
+
+			if ($PSBoundParameters.ContainsKey('APFGain') -and ($APFGain -ne $radioObj.APFGain))
+				{
+				if ($APFGain -lt 0) { $APFGain = 0 }
+				if ($APFGain -gt 100) { $APFGain = 100 }
+
+				$radioObj.set_APFGain($APFGain)
+				}
+
+			if ($PSBoundParameters.ContainsKey('APFMode') -and ($APFMode -ne $radioObj.APFMode))
+				{
+				$radioObj.set_APFMode($APFMode)
+				}
+
+			if ($PSBoundParameters.ContainsKey('APFQFactor') -and ($APFQFactor -ne $radioObj.APFQFactor))
+				{
+				if ($APFQFactor -lt 0) { $APFQFactor = 0 }
+				if ($APFQFactor -gt 33) { $APFQFactor = 33 }
+
+				$radioObj.set_APFQFactor($APFQFactor)
+				}
+
+			if ($PSBoundParameters.ContainsKey('Callsign') -and ($Callsign -ne $radioObj.Callsign))
+				{
+				$radioObj.set_Callsign($Callsign)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CompanderLevel') -and ($CompanderLevel -ne $radioObj.CompanderLevel))
+				{
+				if ($CompanderLevel -lt 0) { $CompanderLevel = 0 }
+				if ($CompanderLevel -gt 100) { $CompanderLevel = 100 }
+
+				$radioObj.set_CompanderLevel($CompanderLevel)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CompanderOn') -and ($CompanderOn -ne $radioObj.CompanderOn))
+				{
+				$radioObj.set_CompanderOn($CompanderOn)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWBreakIn') -and ($CWBreakIn -ne $radioObj.CWBreakIn))
+				{
+				$radioObj.set_CWBreakIn($CWBreakIn)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWDelay') -and ($CWDelay -ne $radioObj.CWDelay))
+				{
+				if ($CWDelay -lt 0) { $CWDelay = 0 }
+				if ($CWDelay -gt 2000) { $CWDelay = 2000 }
+
+				$radioObj.set_CompanderOn($CWDelay)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWIambic') -and ($CWIambic -ne $radioObj.CWIambic))
+				{
+				$radioObj.set_CWIambic($CWIambic)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWIambicModeA') -and ($CWIambicModeA -ne $radioObj.CWIambicModeA))
+				{
+				$radioObj.set_CWIambicModeA($CWIambicModeA)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWIambicModeB') -and ($CWIambicModeB -ne $radioObj.CWIambicModeB))
+				{
+				$radioObj.set_CWIambicModeB($CWIambicModeB)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWPitch') -and ($CWPitch -ne $radioObj.CWPitch))
+				{
+				if ($CWPitch -lt 100) { $CWPitch = 100 }
+				if ($CWPitch -gt 6000) { $CWPitch = 6000 }
+
+				$radioObj.set_CWPitch($CWPitch)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWSpeed') -and ($CWSpeed -ne $radioObj.CWSpeed))
+				{
+				if ($CWSpeed -lt 5) { $CWSpeed = 5 }
+				if ($CWSpeed -gt 100) { $CWSpeed = 100 }
+
+				$radioObj.set_CWSpeed($CWSpeed)
+				}
+
+			if ($PSBoundParameters.ContainsKey('CWSwapPaddles') -and ($CWSwapPaddles -ne $radioObj.CWSwapPaddles))
+				{
+				$radioObj.set_CWSwapPaddles($CWSwapPaddles)
+				}
+
+			if ($PSBoundParameters.ContainsKey('DelayTX') -and ($DelayTX -ne $radioObj.DelayTX))
+				{
+				$radioObj.set_DelayTX($DelayTX)
+				}
+
+			if ($PSBoundParameters.ContainsKey('DAXOn') -and ($DAXOn -ne $radioObj.DAXOn))
+				{
+				$radioObj.set_DAXOn($DAXOn)
+				}
+
+			if ($PSBoundParameters.ContainsKey('HeadphoneGain') -and ($HeadphoneGain -ne $radioObj.HeadphoneGain))
+				{
+				if ($HeadphoneGain -lt 0) { $HeadphoneGain = 0 }
+				if ($HeadphoneGain -gt 100) { $HeadphoneGain = 100 }
+
+				$radioObj.set_HeadphoneGain($HeadphoneGain)
+				}
+
+			if ($PSBoundParameters.ContainsKey('HeadphoneMute') -and ($HeadphoneMute -ne $radioObj.HeadphoneMute))
+				{
+				$radioObj.set_HeadphoneMute($HeadphoneMute)
+				}
+
+			if ($PSBoundParameters.ContainsKey('HWAlcEnabled') -and ($HWAlcEnabled -ne $radioObj.HWAlcEnabled))
+				{
+				$radioObj.set_HWAlcEnabled($HWAlcEnabled)
+				}
+
+			if ($PSBoundParameters.ContainsKey('LineoutGain') -and ($LineoutGain -ne $radioObj.LineoutGain))
+				{
+				if ($LineoutGain -lt 0) { $LineoutGain = 0 }
+				if ($LineoutGain -gt 100) { $LineoutGain = 100 }
+
+				$radioObj.set_LineoutGain($LineoutGain)
+				}
+
+			if ($PSBoundParameters.ContainsKey('LineoutMute') -and ($LineoutMute -ne $radioObj.LineoutMute))
+				{
+				$radioObj.set_LineoutMute($LineoutMute)
+				}
+
+			if ($PSBoundParameters.ContainsKey('MetInRX') -and ($MetInRX -ne $radioObj.MetInRX))
+				{
+				$radioObj.set_MetInRX($MetInRX)
+				}
+
+			if ($PSBoundParameters.ContainsKey('MicBias') -and ($MicBias -ne $radioObj.MicBias))
+				{
+				$radioObj.set_MicBias($MicBias)
+				}
+
+			if ($PSBoundParameters.ContainsKey('MicBoost') -and ($MicBoost -ne $radioObj.MicBoost))
+				{
+				$radioObj.set_MicBoost($MicBoost)
+				}
+
+			if ($PSBoundParameters.ContainsKey('MicLevel') -and ($MicLevel -ne $radioObj.MicLevel))
+				{
+				if ($MicLevel -lt 0) { $MicLevel = 0 }
+				if ($MicLevel -gt 100) { $MicLevel = 100 }
+
+				$radioObj.set_Nickname($MicLevel)
+				}
+
+			if ($PSBoundParameters.ContainsKey('Mox') -and ($Mox -ne $radioObj.Mox))
+				{
+				$radioObj.set_Mox($Mox)
+				}
+
+			if ($PSBoundParameters.ContainsKey('Nickname') -and ($Nickname -ne $radioObj.Nickname))
+				{
+				$radioObj.set_Nickname($Nickname)
+				}
+
+			if ($PSBoundParameters.ContainsKey('RemoteOnEnabled') -and ($RemoteOnEnabled -ne $radioObj.RemoteOnEnabled))
+				{
+				$radioObj.set_RemoteOnEnabled($RemoteOnEnabled)
+				}
+
+			if ($PSBoundParameters.ContainsKey('RFPower') -and ($RFPower -ne $radioObj.RFPower))
+				{
+				if ($RFPower -lt 0) { $RFPower = 0 }
+				if ($RFPower -gt 100) { $RFPower = 100 }
+
+				$radioObj.set_RFPower($RFPower)
+				}
+
+			if ($PSBoundParameters.ContainsKey('Screensaver') -and ($Screensaver -ne $radioObj.Screensaver))
+				{
+				if (($Screensaver -ne "name") -and ($Screensaver -ne "callsign"))
+					{
+					throw "Valid options for Screensaver are 'name' and 'callsign'."
+					}
+
+				$radioObj.set_Screensaver($Screensaver)
+				}
+
+			if ($PSBoundParameters.ContainsKey('ShowTxInWaterfall') -and ($ShowTxInWaterfall -ne $radioObj.ShowTxInWaterfall))
+				{
+				$radioObj.set_ShowTxInWaterfall($ShowTxInWaterfall)
+				}
+
+			if ($PSBoundParameters.ContainsKey('SnapTune') -and ($SnapTune -ne $radioObj.SnapTune))
+				{
+				$radioObj.set_SnapTune($SnapTune)
+				}
+
+
+			if ($PSBoundParameters.ContainsKey('TNFEnabled') -and ($TNFEnabled -ne $radioObj.TNFEnabled))
+				{
+				$radioObj.set_TNFEnabled($TNFEnabled)
+				}
+
+			if ($PSBoundParameters.ContainsKey('TunePower') -and ($TunePower -ne $radioObj.TunePower))
+				{
+				if ($TunePower -lt 0) { $TunePower = 0 }
+				if ($TunePower -gt 100) { $TunePower = 100 }
+
+				$radioObj.set_TunePower($TunePower)
+				}
+
+			if ($PSBoundParameters.ContainsKey('TXReqACCEnabled') -and ($TXReqACCEnabled -ne $radioObj.TXReqACCEnabled))
+				{
+				$radioObj.set_TXReqACCEnabled($TXReqACCEnabled)
+				}
+
+			if ($PSBoundParameters.ContainsKey('TXReqACCPolarity') -and ($TXReqACCPolarity -ne $radioObj.TXReqACCPolarity))
+				{
+				$radioObj.set_TXReqACCPolarity($TXReqACCPolarity)
+				}
+
+			if ($PSBoundParameters.ContainsKey('TXReqRCAEnabled') -and ($TXReqRCAEnabled -ne $radioObj.TXReqRCAEnabled))
+				{
+				$radioObj.set_TXReqRCAEnabled($TXReqRCAEnabled)
+				}
+
+			if ($PSBoundParameters.ContainsKey('TXReqRCAPolarity') -and ($TXReqRCAPolarity -ne $radioObj.TXReqRCAPolarity))
+				{
+				$radioObj.set_TXReqRCAPolarity($TXReqRCAPolarity)
 				}
 			}
 		}
@@ -819,9 +1025,12 @@ function set-FlexRadio
 
 export-modulemember -function get-FlexRadio
 export-modulemember -function set-FlexRadio
+export-modulemember -function set-FlexSliceReceiver
+export-modulemember -function set-FlexPanadapter
 export-modulemember -function connect-flexradio
 export-modulemember -function disconnect-flexradio
 export-modulemember -function get-FlexSliceReceiver
 export-modulemember -function get-FlexPanadapter
 export-modulemember -function get-flexpacket
 export-modulemember -function get-packet
+export-modulemember -function get-flexlatestfolderpath

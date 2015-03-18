@@ -78,7 +78,31 @@ function ResolveIP ($ip)
 
 function get-packet
 	{
-	param([string]$LocalIP = "NotSpecified", [string]$remoteIP, [string]$Protocol = "all", [int]$Seconds = 0, [switch]$ResolveHosts, [switch]$Statistics, [switch]$Silent)
+	[CmdletBinding(DefaultParameterSetName="p0",
+		SupportsShouldProcess=$true,
+		ConfirmImpact="Low")]
+	param(
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[string]$LocalIP,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[string]$RemoteIP,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[string]$Protocol = "all",
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[int]$Seconds = 0,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[switch]$ResolveHosts,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[switch]$Statistics,
+
+		[Parameter(ParameterSetName="p0",Position=0)]
+		[switch]$silent
+		)
 
 	$starttime = get-date
 	$byteIn = new-object byte[] 4
@@ -100,6 +124,7 @@ function get-packet
 	$TCPURG = [byte]0x20
 
 	# try to figure out which IP address to bind to by looking at the default route
+	<#
 	if ($LocalIP -eq "NotSpecified") {
 		route print 0* | % { 
 			if ($_ -match "\s{2,}0\.0\.0\.0") { 
@@ -107,14 +132,36 @@ function get-packet
 				}
 			}
 		}
+	#>
 
-	write-host "Using IPv4 Address: $LocalIP"
+	if (-not $localIP)
+		{
+		# this is probably a better way
+		$AddressList = ([system.net.dns]::gethostentry([system.net.dns]::gethostname())).addresslist | ? { $_.AddressFamily -eq "InterNetwork" -and $_.IPAddressToString -notmatch "^169" }
+
+		if ($AddressList -is [array])
+			{
+			throw "Multiple local IP addresses found. Use the -LocalIP option to specify the local IP address to use."
+			}
+		elseif (-not $AddressList)
+			{
+			throw "Unable to determine local IP address. Use the -LocalIP option to specify the local IP address to use."
+			}
+		else
+			{
+		    $LocalIP = $AddressList.IPAddressToString
+			}
+		}
+
+	write-verbose "Using IPv4 Address: $LocalIP"
 
 	# open a socket -- Type should be Raw, and ProtocolType has to be IP for promiscuous mode, otherwise iocontrol will fail below.
 	$socket = new-object system.net.sockets.socket([Net.Sockets.AddressFamily]::InterNetwork,[Net.Sockets.SocketType]::Raw,[Net.Sockets.ProtocolType]::IP)
 
 	# this tells the socket to include the IP header
 	$socket.setsocketoption("IP","HeaderIncluded",$true)
+
+	# $socket.dontfragment = $true
 
 	# make the buffer big or we'll drop packets.
 	# $socket.ReceiveBufferSize = 819200
@@ -128,11 +175,15 @@ function get-packet
 	# this enables promiscuous mode
 	[void]$socket.iocontrol([net.sockets.iocontrolcode]::ReceiveAll,$byteIn,$byteOut)
 
-	write-host "Press ESC to stop the packet sniffer ..." -fore yellow
+	# write-host "Press ESC to stop the packet sniffer ..." -fore yellow
 
 	$escKey = 27
 	$running = $true
 	$packets = @()  # this will hold all packets for later analysis
+
+	$smartSDRdetected = $false
+	$DAXdetected = $false
+	$CATdetected = $false
 
 	while ($running)
 		{
@@ -153,6 +204,48 @@ function get-packet
 			break
 			}
 
+		if ($smartSDRdetected -eq $false -and $protocol -eq "flex")
+			{
+			$SmartSDRVersion = (get-process | ? { $_.processname -eq "SmartSDR" }).productversion
+			write-verbose "SmartSDRVersion: $SmartSDRVersion"
+
+			if ($SmartSDRVersion)
+				{
+				displayTime
+				displaySource "*"
+				write-host "SmartSDR detected, version $SmartSDRVersion." -foregroundcolor cyan
+				$smartSDRdetected = $true
+				}
+			}
+
+		if ($DAXdetected -eq $false -and $protocol -eq "flex")
+			{
+			$DAXversion = (get-process | ? { $_.processname -eq "DAX" }).productversion
+			write-verbose "DAXversion: $DAXversion"
+
+			if ($DAXversion)
+				{
+				displayTime
+				displaySource "*"
+				write-host "DAX detected, version $DAXversion." -foregroundcolor cyan
+				$DAXdetected = $true
+				}
+			}
+
+		if ($CATdetected -eq $false -and $protocol -eq "flex")
+			{
+			$CATversion = (get-process | ? { $_.processname -eq "Cat" }).productversion
+			write-verbose "CATversion: $CATversion"
+
+			if ($CATversion)
+				{
+				displayTime
+				displaySource "*"
+				write-host "CAT detected, version $CATversion." -foregroundcolor cyan
+				$CATdetected = $true
+				}
+			}
+
 		if (-not $socket.Available)  # see if any packets are in the queue
 			{
 			start-sleep -milliseconds 500
@@ -160,26 +253,39 @@ function get-packet
 			continue
 			}
 		
+		#$stream = [system.io.bufferedstream]([system.net.sockets.NetworkStream]($socket), 8192)
+
 		# receive data
 		$rcv = $socket.receive($byteData,0,$byteData.length,[net.sockets.socketflags]::None)
 
 		# decode the header (see RFC 791 or this will make no sense)
 		$MemoryStream = new-object System.IO.MemoryStream($byteData,0,$rcv)
 		$BinaryReader = new-object System.IO.BinaryReader($MemoryStream)
+		#$BinaryReader = new-object System.IO.BinaryReader($stream)
+
+		$byteArr = $nulll
+		$byteArr = $BinaryReader.ReadBytes(10)
 
 		# First 8 bits of IP header contain version & header length
-		$VersionAndHeaderLength = $BinaryReader.ReadByte()
+		#$VersionAndHeaderLength = $BinaryReader.ReadByte()
+		$VersionAndHeaderLength = $byteArr[0]
 
 		# Next 8 bits contain the TOS (type of service)
-		$TypeOfService= $BinaryReader.ReadByte()
+		#$TypeOfService = $BinaryReader.ReadByte()
+		$TypeOfService = $byteArr[1]
 
 		# total length of header and payload
-		$TotalLength = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
+		#$TotalLength = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
+		$TotalLength = NetworkToHostUInt16 $byteArr[2..3]
 
-		$Identification = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
-		$FlagsAndOffset = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
-		$TTL = $BinaryReader.ReadByte()
-		$ProtocolNumber = $BinaryReader.ReadByte()
+		#$Identification = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
+		$Identification = NetworkToHostUInt16 $byteArr[4..5]
+		#$FlagsAndOffset = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
+		$FlagsAndOffset = NetworkToHostUInt16 $byteArr[6..7]
+		#$TTL = $BinaryReader.ReadByte()
+		$TTL = $byteArr[8]
+		#$ProtocolNumber = $BinaryReader.ReadByte()
+		$ProtocolNumber = $byteArr[9]
 		$Checksum = [Net.IPAddress]::NetworkToHostOrder($BinaryReader.ReadInt16())
 
 		$SourceIPAddress = $BinaryReader.ReadUInt32()
@@ -272,8 +378,12 @@ function get-packet
 				$UDPLength = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
 				[void]$BinaryReader.ReadBytes(2)
 				# subtract udp header length (2 octets) and convert octets to bytes.
-				$Data = ByteToString $BinaryReader.ReadBytes(($UDPLength - 2) * 4)
-				
+				$byteLength = ($UDPLength - 2) * 4
+				if ($byteLength -ge 0)	# was seeing exceptions about negative numbers from ReadBytes() for some reason
+					{
+					$Data = ByteToString $BinaryReader.ReadBytes($byteLength)
+					}
+
 				break
 				}
 			default {
