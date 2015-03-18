@@ -104,11 +104,15 @@ function import-flexlib
             }
         catch [system.exception]
             {
+            push-location (split-path $flexLibPath)
             add-type -path $flexLibPath
+            pop-location
             }
         }
     else
         {
+        pop-location
+
         throw "Unable to locate FlexRadio FlexLib DLL, or DLL is incompatible with this architecture!"
         }
 
