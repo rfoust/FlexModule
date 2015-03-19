@@ -53,43 +53,55 @@ function get-flexlatestfolderpath
 
 function get-flexlibpath
     {
-    $flexDLL = $null
-    $DLLdata = $null
+    [CmdletBinding(DefaultParameterSetName="p0",
+        SupportsShouldProcess=$false,
+        ConfirmImpact="Low")]
+    param()
 
-    $latestPath = get-flexlatestfolderpath
+    begin { }
 
-    if ($latestPath)
+    process 
         {
-        $flexDLL = $latestpath + "\FlexLib.dll"
+        $flexDLL = $null
+        $DLLdata = $null
 
-        if (test-path $flexDLL)
+        $latestPath = get-flexlatestfolderpath
+
+        if ($latestPath)
             {
-            $DLLdata = [reflection.assemblyname]::getassemblyname($flexDLL)
+            $flexDLL = $latestpath + "\FlexLib.dll"
 
-            if (($DLLdata.ProcessorArchitecture -ne "MSIL") -and (test-win64))  # x86 dll on 64 bit host?
+            if (test-path $flexDLL)
                 {
-                write-verbose "Incompatible FlexLib - Wrong architecture!"
+                $DLLdata = [reflection.assemblyname]::getassemblyname($flexDLL)
 
-                $moduleRoot = split-path (get-module -ListAvailable flexmodule).path
-
-                if (test-path ($moduleRoot + "\FlexLib.dll"))
+                if (($DLLdata.ProcessorArchitecture -ne "MSIL") -and (test-win64))  # x86 dll on 64 bit host?
                     {
-                    # this is our last hope to find a compatible flexlib dll
-                    write-verbose "Using DLL included with FlexModule."
+                    write-verbose "Incompatible FlexLib - Wrong architecture!"
 
-                    $moduleRoot + "\FlexLib.dll"
+                    $moduleRoot = split-path (get-module -ListAvailable flexmodule).path
+
+                    if (test-path ($moduleRoot + "\FlexLib.dll"))
+                        {
+                        # this is our last hope to find a compatible flexlib dll
+                        write-verbose "Using DLL included with FlexModule."
+
+                        $moduleRoot + "\FlexLib.dll"
+                        }
+                    else
+                        {
+                        return
+                        }
                     }
                 else
                     {
-                    return
+                    $flexDLL
                     }
-                }
-            else
-                {
-                $flexDLL
                 }
             }
         }
+
+    end { }
     }
 
 function import-flexlib
