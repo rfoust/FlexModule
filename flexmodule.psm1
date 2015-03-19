@@ -71,7 +71,7 @@ function get-flexradio
 	end { }
 	}
 
-
+<# - no longer used
 function findFlexRadioIndexNumber
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
@@ -111,7 +111,7 @@ function findFlexRadioIndexNumber
 
 	end { }
 	}
-
+#>
 
 function connect-flexradio
 	{
@@ -466,7 +466,7 @@ function set-FlexPanadapter
 
 # profile functions need to be rewritten - flex added support for saved profiles since this was written
 
-function get-FlexProfile
+function get-FlexProfileOLD
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
 		SupportsShouldProcess=$true,
@@ -526,7 +526,7 @@ function get-FlexProfile
 	}
 
 
-function export-FlexProfile
+function export-FlexProfileOLD
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
 		SupportsShouldProcess=$true,
@@ -1022,6 +1022,165 @@ function set-FlexRadio
 	end { }
 	}
 
+function get-FlexProfile
+	{
+	[CmdletBinding(DefaultParameterSetName="p0",
+		SupportsShouldProcess=$true,
+		ConfirmImpact="Low")]
+	param(
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
+		[string]$serial
+		)
+
+	begin { }
+
+	process 
+		{
+		if (-not $serialNumber)
+			{
+			if ($global:FlexRadios.count -eq 1)
+				{
+				write-verbose "One FlexRadio found. Using it."
+				$serialNumber = $global:FlexRadios[0].serial
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+				}
+			}
+
+		foreach ($radio in $serialNumber)
+			{
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+
+			write-verbose "Serial: $($radioObj.serial)"
+
+			if (-not $radioObj.serial)
+				{
+				continue
+				}
+			
+			write-verbose "Radio connected: $($radioObj.connected)"
+
+			if ($radioObj.Connected -eq $false)
+				{
+				write-warning "Not connected to $($radioObj.model): $($radioObj.serial). Use connect-flexradio to establish a new connection."
+
+				continue
+				}
+
+			# start building the profile object
+
+			# ProfileMicList
+			foreach ($profile in $radioObj.ProfileMicList)
+				{
+				if ($profile -eq $null)
+					{
+					continue
+					}
+
+				$profileObj = new-object psobject
+
+				$profileObj | add-member NoteProperty -Name "ProfileType" -Value "Mic"
+				$profileObj | add-member NoteProperty -Name "Name" -Value $profile
+
+				if ($profile -eq $radioObj.profileMicSelection)
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $true
+					}
+				else
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $false
+					}
+
+				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj
+				}
+
+			# ProfileTXList
+			foreach ($profile in $radioObj.ProfileTXList)
+				{
+				if ($profile -eq $null)
+					{
+					continue
+					}
+
+				$profileObj = new-object psobject
+
+				$profileObj | add-member NoteProperty -Name "ProfileType" -Value "TX"
+				$profileObj | add-member NoteProperty -Name "Name" -Value $profile
+
+				if ($profile -eq $radioObj.profileTXSelection)
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $true
+					}
+				else
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $false
+					}
+
+				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj
+				}
+
+			# ProfileDisplayList
+			foreach ($profile in $radioObj.ProfileDisplayList)
+				{
+				if ($profile -eq $null)
+					{
+					continue
+					}
+
+				$profileObj = new-object psobject
+
+				$profileObj | add-member NoteProperty -Name "ProfileType" -Value "Display"
+				$profileObj | add-member NoteProperty -Name "Name" -Value $profile
+
+				if ($profile -eq $radioObj.profileDisplaySelection)
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $true
+					}
+				else
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $false
+					}
+
+				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj
+				}
+
+			# ProfileGlobalList
+			foreach ($profile in $radioObj.ProfileGlobalList)
+				{
+				if ($profile -eq $null)
+					{
+					continue
+					}
+
+				$profileObj = new-object psobject
+
+				$profileObj | add-member NoteProperty -Name "ProfileType" -Value "Global"
+				$profileObj | add-member NoteProperty -Name "Name" -Value $profile
+
+				if ($profile -eq $radioObj.profileGlobalSelection)
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $true
+					}
+				else
+					{
+					$profileObj | add-member NoteProperty -Name "Selected" -Value $false
+					}
+
+				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj
+				}
+			
+			}
+		}
+
+	end { }
+	}
+
 
 export-modulemember -function get-FlexRadio
 export-modulemember -function set-FlexRadio
@@ -1034,3 +1193,4 @@ export-modulemember -function get-FlexPanadapter
 export-modulemember -function get-flexpacket
 export-modulemember -function get-packet
 export-modulemember -function get-flexlatestfolderpath
+export-modulemember -function get-FlexProfile
