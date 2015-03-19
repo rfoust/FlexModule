@@ -1,5 +1,5 @@
 # FlexModule
-Powershell module for FlexRadio 6000 model amateur radios
+Powershell module for FlexRadio 6000 model amateur radios.
 FlexRadio Systems does not support this module, please do not contact them for support regarding FlexModule.
 This module might blow up your computer or brick your FlexRadio 6000 series radio. Use at your own risk, and if anything happens, you assume the risk and responsiblity.
 
@@ -15,4 +15,4 @@ Enjoy!
 
 73's
 
--Robbie
+-Robbie KI4TTZ
