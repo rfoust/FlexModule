@@ -123,8 +123,6 @@ function import-flexlib
         }
     else
         {
-        pop-location
-
         throw "Unable to locate FlexRadio FlexLib DLL, or DLL is incompatible with this architecture!"
         }
 
