@@ -22,7 +22,7 @@ function get-flexradio
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName="p0",Position=1)]
+		[Parameter(ParameterSetName="p1")]
 		[switch]$Discover
 		)
 
@@ -363,10 +363,10 @@ function set-FlexSliceReceiver
 		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
-		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$Lock
 
 		)
@@ -418,6 +418,7 @@ function set-FlexSliceReceiver
 	end { }
 	}
 
+# this function needs work
 function set-FlexPanadapter
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
@@ -617,127 +618,127 @@ function set-FlexRadio
 		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
-		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$ACCOn,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$AMCarrierLevel,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$APFGain,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$APFMode,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$APFQFactor,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[string]$Callsign,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$CompanderLevel,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$CompanderOn,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$CWBreakIn,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$CWDelay,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$CWIambic,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$CWIambicModeA,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$CWIambicModeB,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$CWPitch,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$CWSpeed,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$CWSwapPaddles,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$DelayTX,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[string]$DAXOn,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$HeadphoneGain,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$HeadphoneMute,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$HWAlcEnabled,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$LineoutGain,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$LineoutMute,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$MetInRX,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$MicBias,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$MicBoost,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$MicLevel,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$Mox,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[string]$Nickname,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$RemoteOnEnabled,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$RFPower,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[string]$Screensaver,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$ShowTxInWaterfall,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$SnapTune,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$TNFEnabled,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[int]$TunePower,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$TXReqACCEnabled,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$TXReqACCPolarity,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$TXReqRCAEnabled,
 
-		[Parameter(ParameterSetName="p0",Position=0)]
+		[Parameter(ParameterSetName="p0")]
 		[bool]$TXReqRCAPolarity
 
 		)
