@@ -2,6 +2,7 @@
 . $PSScriptRoot\get-packet.ps1
 . $PSScriptRoot\FlexPacket.ps1
 . $PSScriptRoot\FlexLib.ps1
+. $PSScriptRoot\FlexBackup.ps1
 
 # todo: send "exit reboot" to reboot radio.
 
@@ -19,7 +20,7 @@ function get-flexradio
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
-		[string]$SerialNumber,
+		[string]$Serial,
 
 		[Parameter(ParameterSetName="p0",Position=1)]
 		[switch]$Discover
@@ -54,9 +55,9 @@ function get-flexradio
 				}
 			}
 
-		if ($SerialNumber)
+		if ($Serial)
 			{
-			$global:FlexRadios | ? { $_.serial -eq $SerialNumber }
+			$global:FlexRadios | ? { $_.serial -eq $Serial }
 			}
 		elseif ($global:FlexRadios)
 			{
@@ -120,29 +121,29 @@ function connect-flexradio
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
-		[string]$serialNumber
+		[string]$Serial
 		)
 
 	begin { }
 
 	process 
 		{
-		if (-not $serialNumber)
+		if (-not $Serial)
 			{
 			if ($global:FlexRadios.count -eq 1)
 				{
 				write-verbose "One FlexRadio found. Using it."
-				$serialNumber = $global:FlexRadios[0].serial
+				$Serial = $global:FlexRadios[0].serial
 				}
 			else
 				{
-			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
 				}
 			}
 
-		foreach ($radio in $serialNumber)
+		foreach ($radio in $Serial)
 			{
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -186,29 +187,29 @@ function disconnect-flexradio
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
-		[string]$serialNumber
+		[string]$Serial
 		)
 
 	begin { }
 
 	process 
 		{
-		if (-not $serialNumber)
+		if (-not $Serial)
 			{
 			if ($global:FlexRadios.count -eq 1)
 				{
 				write-verbose "One FlexRadio found. Using it."
-				$serialNumber = $global:FlexRadios[0].serial
+				$Serial = $global:FlexRadios[0].serial
 				}
 			else
 				{
-			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
 				}
 			}
 
-		foreach ($radio in $serialNumber)
+		foreach ($radio in $Serial)
 			{
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -249,29 +250,29 @@ function get-FlexSliceReceiver
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
-		[string]$serial
+		[string]$Serial
 		)
 
 	begin { }
 
 	process 
 		{
-		if (-not $serialNumber)
+		if (-not $Serial)
 			{
 			if ($global:FlexRadios.count -eq 1)
 				{
 				write-verbose "One FlexRadio found. Using it."
-				$serialNumber = $global:FlexRadios[0].serial
+				$Serial = $global:FlexRadios[0].serial
 				}
 			else
 				{
-			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
 				}
 			}
 
-		foreach ($radio in $serialNumber)
+		foreach ($radio in $Serial)
 			{
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -306,29 +307,29 @@ function get-FlexPanadapter
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
-		[string]$serial
+		[string]$Serial
 		)
 
 	begin { }
 
 	process 
 		{
-		if (-not $serialNumber)
+		if (-not $Serial)
 			{
 			if ($global:FlexRadios.count -eq 1)
 				{
 				write-verbose "One FlexRadio found. Using it."
-				$serialNumber = $global:FlexRadios[0].serial
+				$Serial = $global:FlexRadios[0].serial
 				}
 			else
 				{
-			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
 				}
 			}
 
-		foreach ($radio in $serialNumber)
+		foreach ($radio in $Serial)
 			{
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -363,7 +364,7 @@ function set-FlexSliceReceiver
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
-		[string]$serial,
+		[string]$Serial,
 
 		[Parameter(ParameterSetName="p0",Position=0)]
 		[bool]$Lock
@@ -374,7 +375,7 @@ function set-FlexSliceReceiver
 
 	process
 		{
-		if (-not $serialNumber)
+		if (-not $Serial)
 			{
 			if ($global:FlexRadios.count -eq 1)
 				{
@@ -382,12 +383,12 @@ function set-FlexSliceReceiver
 				}
 			else
 				{
-			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
 				}
 			}
 		else
 			{
-		    $radioObject = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+		    $radioObject = $global:FlexRadios | ? { $_.serial -eq $Serial }
 			}
 
 		foreach ($radio in $RadioObject)
@@ -465,7 +466,7 @@ function set-FlexPanadapter
 
 
 # profile functions need to be rewritten - flex added support for saved profiles since this was written
-
+<#
 function get-FlexProfileOLD
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
@@ -597,17 +598,18 @@ function export-FlexProfileOLD
 			$radioFile = $ProfileDir + "\$name.radio"
 			$global:flexradios[$indexObj.index] | export-clixml -depth 4 -path $radioFile
 
-			<#
-			write-verbose "Exporting slice/panadapter configuration ..."
+			
+			#write-verbose "Exporting slice/panadapter configuration ..."
 
-			$sliceFile = $ProfileDir + "\$name.slice"
-			$global:slicereceivers | export-clixml -depth 4 -path $sliceFile
-			#>
+			#$sliceFile = $ProfileDir + "\$name.slice"
+			#$global:slicereceivers | export-clixml -depth 4 -path $sliceFile
+			
 			}
 		}
 
 	end { }
 	}
+#>
 
 function set-FlexRadio
 	{
@@ -616,7 +618,7 @@ function set-FlexRadio
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=1, ValueFromPipelineByPropertyName = $true)]
-		[string]$serialNumber,
+		[string]$Serial,
 
 		[Parameter(ParameterSetName="p0",Position=0)]
 		[bool]$ACCOn,
@@ -744,7 +746,7 @@ function set-FlexRadio
 
 	process 
 		{
-		if (-not $serialNumber)
+		if (-not $Serial)
 			{
 			if ($global:FlexRadios.count -eq 1)
 				{
@@ -753,13 +755,13 @@ function set-FlexRadio
 				}
 			else
 				{
-			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
 				}
 			}
 
-		foreach ($radio in $serialNumber)
+		foreach ($radio in $Serial)
 			{
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -1029,29 +1031,29 @@ function get-FlexProfile
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
-		[string]$serial
+		[string]$Serial
 		)
 
 	begin { }
 
 	process 
 		{
-		if (-not $serialNumber)
+		if (-not $Serial)
 			{
 			if ($global:FlexRadios.count -eq 1)
 				{
 				write-verbose "One FlexRadio found. Using it."
-				$serialNumber = $global:FlexRadios[0].serial
+				$Serial = $global:FlexRadios[0].serial
 				}
 			else
 				{
-			    throw "Specify radio to use by serial number with -SerialNumber argument, or use pipeline."
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
 				}
 			}
 
-		foreach ($radio in $serialNumber)
+		foreach ($radio in $Serial)
 			{
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $serialNumber }
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -1094,6 +1096,7 @@ function get-FlexProfile
 					}
 
 				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj.PSObject.TypeNames.Insert(0,'FlexModule.Profile')
 				$profileObj
 				}
 
@@ -1120,6 +1123,7 @@ function get-FlexProfile
 					}
 
 				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj.PSObject.TypeNames.Insert(0,'FlexModule.Profile')
 				$profileObj
 				}
 
@@ -1146,6 +1150,7 @@ function get-FlexProfile
 					}
 
 				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj.PSObject.TypeNames.Insert(0,'FlexModule.Profile')
 				$profileObj
 				}
 
@@ -1172,6 +1177,7 @@ function get-FlexProfile
 					}
 
 				$profileObj | add-member NoteProperty -Name "Serial" -Value $radioObj.serial
+				$profileObj.PSObject.TypeNames.Insert(0,'FlexModule.Profile')
 				$profileObj
 				}
 			
@@ -1194,3 +1200,4 @@ export-modulemember -function get-flexpacket
 export-modulemember -function get-packet
 export-modulemember -function get-flexlatestfolderpath
 export-modulemember -function get-FlexProfile
+export-modulemember -function export-FlexDatabase
