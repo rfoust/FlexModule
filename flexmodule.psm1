@@ -22,7 +22,7 @@ function get-flexradio
 		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName="p1")]
+		[Parameter(ParameterSetName="p0")]
 		[switch]$Discover
 		)
 
@@ -114,7 +114,7 @@ function findFlexRadioIndexNumber
 	}
 #>
 
-function connect-flexradio
+function connect-FlexRadio
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
 		SupportsShouldProcess=$true,
@@ -152,26 +152,31 @@ function connect-flexradio
 				continue
 				}
 
-			$result = $radioObj.connect()
-
-			if ($result -eq $false)
+			if ($pscmdlet.ShouldProcess($radioObj.Serial,"Connect to Radio"))
 				{
-				throw "Connect() result was False, unable to connect to radio."
-				}
-			else
-				{
-				$count = 0
+				$result = $radioObj.connect()
 
-				while ($count -lt 5)
+				if ($result -eq $false)
 					{
-					if ($radioObj.Connected -eq $true)
+					write-warning "$($radioObj.serial) : Connect() result was False, unable to connect to radio."
+					}
+				else
+					{
+					$count = 0
+
+					while ($count -lt 5)
 						{
-						$radioObj
+						if ($radioObj.Connected -eq $true)
+							{
+							$radioObj
 
-						break
+							break
+							}
+
+						$count++
+
+						start-sleep -milliseconds 250
 						}
-
-					$count++
 					}
 				}
 			}
@@ -180,7 +185,7 @@ function connect-flexradio
 	end { }
 	}
 
-function disconnect-flexradio
+function disconnect-FlexRadio
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
 		SupportsShouldProcess=$true,
@@ -219,22 +224,29 @@ function disconnect-flexradio
 				}
 
 			write-verbose "Disconnecting radio ..."
-			$radioObj.disconnect()
 
-			start-sleep -milliseconds 500
-			$count = 0
-			while ($count -lt 5)
+			if ($pscmdlet.ShouldProcess($radioObj.Serial,"Disconnect from Radio"))
 				{
-				if ($radioObj.Connected -eq $false)
-					{
-					write-verbose "Radio disconnected."
-					$radioObj
+				$radioObj.disconnect()
 
-					break
-					}
-
-				$count++
 				start-sleep -milliseconds 500
+
+				$count = 0
+
+				while ($count -lt 5)
+					{
+					if ($radioObj.Connected -eq $false)
+						{
+						write-verbose "Radio disconnected."
+						$radioObj
+
+						break
+						}
+
+					$count++
+					
+					start-sleep -milliseconds 500
+					}
 				}
 			}
 		}
