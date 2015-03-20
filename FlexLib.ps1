@@ -81,12 +81,12 @@ function get-flexlibpath
 
                     $moduleRoot = split-path (get-module -ListAvailable flexmodule).path
 
-                    if (test-path ($moduleRoot + "\FlexLib.dll"))
+                    if (test-path ($moduleRoot + "\Lib\FlexLib.dll"))
                         {
                         # this is our last hope to find a compatible flexlib dll
                         write-verbose "Using DLL included with FlexModule."
 
-                        $moduleRoot + "\FlexLib.dll"
+                        $moduleRoot + "\Lib\FlexLib.dll"
                         }
                     else
                         {
