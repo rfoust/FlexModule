@@ -158,7 +158,7 @@ function export-FlexDatabase
 
             write-verbose "ExportMemories: $exportMemories"
 
-            if ($pscmdlet.ShouldProcess($radioObj.Serial))
+            if ($pscmdlet.ShouldProcess($radioObj.Serial,"Export Database to File"))
                 {
                 $radioObj.ReceiveSSDRDatabaseFile($metaFullPath,$(split-path $metaFullPath),$exportMemories)
 
