@@ -780,7 +780,10 @@ function set-FlexRadio
 
 			if ($PSBoundParameters.ContainsKey('AccOn') -and ($ACCOn -ne $radioObj.AccOn))
 				{
-				$radioObj.set_AccOn($AccOn)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify AccOn"))
+					{
+					$radioObj.set_AccOn($AccOn)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('AMCarrierLevel') -and ($AMCarrierLevel -ne $radioObj.AMCarrierLevel))
@@ -788,7 +791,10 @@ function set-FlexRadio
 				if ($AMCarrierLevel -lt 0) { $AMCarrierLevel = 0 }
 				if ($AMCarrierLevel -gt 100) { $AMCarrierLevel = 100 }
 
-				$radioObj.set_AMCarrierLevel($AMCarrierLevel)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify AMCarrierLevel"))
+					{
+					$radioObj.set_AMCarrierLevel($AMCarrierLevel)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('APFGain') -and ($APFGain -ne $radioObj.APFGain))
@@ -796,12 +802,18 @@ function set-FlexRadio
 				if ($APFGain -lt 0) { $APFGain = 0 }
 				if ($APFGain -gt 100) { $APFGain = 100 }
 
-				$radioObj.set_APFGain($APFGain)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify APFGain"))
+					{
+					$radioObj.set_APFGain($APFGain)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('APFMode') -and ($APFMode -ne $radioObj.APFMode))
 				{
-				$radioObj.set_APFMode($APFMode)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify APFMode"))
+					{
+					$radioObj.set_APFMode($APFMode)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('APFQFactor') -and ($APFQFactor -ne $radioObj.APFQFactor))
@@ -809,12 +821,18 @@ function set-FlexRadio
 				if ($APFQFactor -lt 0) { $APFQFactor = 0 }
 				if ($APFQFactor -gt 33) { $APFQFactor = 33 }
 
-				$radioObj.set_APFQFactor($APFQFactor)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify APFQFactor"))
+					{
+					$radioObj.set_APFQFactor($APFQFactor)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('Callsign') -and ($Callsign -ne $radioObj.Callsign))
 				{
-				$radioObj.set_Callsign($Callsign)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify Callsign"))
+					{
+					$radioObj.set_Callsign($Callsign)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CompanderLevel') -and ($CompanderLevel -ne $radioObj.CompanderLevel))
@@ -822,17 +840,26 @@ function set-FlexRadio
 				if ($CompanderLevel -lt 0) { $CompanderLevel = 0 }
 				if ($CompanderLevel -gt 100) { $CompanderLevel = 100 }
 
-				$radioObj.set_CompanderLevel($CompanderLevel)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CompanderLevel"))
+					{
+					$radioObj.set_CompanderLevel($CompanderLevel)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CompanderOn') -and ($CompanderOn -ne $radioObj.CompanderOn))
 				{
-				$radioObj.set_CompanderOn($CompanderOn)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CompanderOn"))
+					{
+					$radioObj.set_CompanderOn($CompanderOn)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWBreakIn') -and ($CWBreakIn -ne $radioObj.CWBreakIn))
 				{
-				$radioObj.set_CWBreakIn($CWBreakIn)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWBreakIn"))
+					{
+					$radioObj.set_CWBreakIn($CWBreakIn)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWDelay') -and ($CWDelay -ne $radioObj.CWDelay))
@@ -840,22 +867,34 @@ function set-FlexRadio
 				if ($CWDelay -lt 0) { $CWDelay = 0 }
 				if ($CWDelay -gt 2000) { $CWDelay = 2000 }
 
-				$radioObj.set_CompanderOn($CWDelay)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWDelay"))
+					{
+					$radioObj.set_CWDelay($CWDelay)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWIambic') -and ($CWIambic -ne $radioObj.CWIambic))
 				{
-				$radioObj.set_CWIambic($CWIambic)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWIambic"))
+					{
+					$radioObj.set_CWIambic($CWIambic)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWIambicModeA') -and ($CWIambicModeA -ne $radioObj.CWIambicModeA))
 				{
-				$radioObj.set_CWIambicModeA($CWIambicModeA)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWIambicModeA"))
+					{
+					$radioObj.set_CWIambicModeA($CWIambicModeA)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWIambicModeB') -and ($CWIambicModeB -ne $radioObj.CWIambicModeB))
 				{
-				$radioObj.set_CWIambicModeB($CWIambicModeB)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWIambicModeB"))
+					{
+					$radioObj.set_CWIambicModeB($CWIambicModeB)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWPitch') -and ($CWPitch -ne $radioObj.CWPitch))
@@ -863,7 +902,10 @@ function set-FlexRadio
 				if ($CWPitch -lt 100) { $CWPitch = 100 }
 				if ($CWPitch -gt 6000) { $CWPitch = 6000 }
 
-				$radioObj.set_CWPitch($CWPitch)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWPitch"))
+					{
+					$radioObj.set_CWPitch($CWPitch)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWSpeed') -and ($CWSpeed -ne $radioObj.CWSpeed))
@@ -871,22 +913,34 @@ function set-FlexRadio
 				if ($CWSpeed -lt 5) { $CWSpeed = 5 }
 				if ($CWSpeed -gt 100) { $CWSpeed = 100 }
 
-				$radioObj.set_CWSpeed($CWSpeed)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWSpeed"))
+					{
+					$radioObj.set_CWSpeed($CWSpeed)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('CWSwapPaddles') -and ($CWSwapPaddles -ne $radioObj.CWSwapPaddles))
 				{
-				$radioObj.set_CWSwapPaddles($CWSwapPaddles)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWSwapPaddles"))
+					{
+					$radioObj.set_CWSwapPaddles($CWSwapPaddles)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('DelayTX') -and ($DelayTX -ne $radioObj.DelayTX))
 				{
-				$radioObj.set_DelayTX($DelayTX)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify DelayTX"))
+					{
+					$radioObj.set_DelayTX($DelayTX)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('DAXOn') -and ($DAXOn -ne $radioObj.DAXOn))
 				{
-				$radioObj.set_DAXOn($DAXOn)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify DAXOn"))
+					{
+					$radioObj.set_DAXOn($DAXOn)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('HeadphoneGain') -and ($HeadphoneGain -ne $radioObj.HeadphoneGain))
@@ -894,17 +948,26 @@ function set-FlexRadio
 				if ($HeadphoneGain -lt 0) { $HeadphoneGain = 0 }
 				if ($HeadphoneGain -gt 100) { $HeadphoneGain = 100 }
 
-				$radioObj.set_HeadphoneGain($HeadphoneGain)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify HeadphoneGain"))
+					{
+					$radioObj.set_HeadphoneGain($HeadphoneGain)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('HeadphoneMute') -and ($HeadphoneMute -ne $radioObj.HeadphoneMute))
 				{
-				$radioObj.set_HeadphoneMute($HeadphoneMute)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify HeadphoneMute"))
+					{
+					$radioObj.set_HeadphoneMute($HeadphoneMute)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('HWAlcEnabled') -and ($HWAlcEnabled -ne $radioObj.HWAlcEnabled))
 				{
-				$radioObj.set_HWAlcEnabled($HWAlcEnabled)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify HWAlcEnabled"))
+					{
+					$radioObj.set_HWAlcEnabled($HWAlcEnabled)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('LineoutGain') -and ($LineoutGain -ne $radioObj.LineoutGain))
@@ -912,27 +975,42 @@ function set-FlexRadio
 				if ($LineoutGain -lt 0) { $LineoutGain = 0 }
 				if ($LineoutGain -gt 100) { $LineoutGain = 100 }
 
-				$radioObj.set_LineoutGain($LineoutGain)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify LineoutGain"))
+					{
+					$radioObj.set_LineoutGain($LineoutGain)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('LineoutMute') -and ($LineoutMute -ne $radioObj.LineoutMute))
 				{
-				$radioObj.set_LineoutMute($LineoutMute)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify LineoutMute"))
+					{
+					$radioObj.set_LineoutMute($LineoutMute)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('MetInRX') -and ($MetInRX -ne $radioObj.MetInRX))
 				{
-				$radioObj.set_MetInRX($MetInRX)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify MetInRX"))
+					{
+					$radioObj.set_MetInRX($MetInRX)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('MicBias') -and ($MicBias -ne $radioObj.MicBias))
 				{
-				$radioObj.set_MicBias($MicBias)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify MicBias"))
+					{
+					$radioObj.set_MicBias($MicBias)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('MicBoost') -and ($MicBoost -ne $radioObj.MicBoost))
 				{
-				$radioObj.set_MicBoost($MicBoost)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify MicBoost"))
+					{
+					$radioObj.set_MicBoost($MicBoost)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('MicLevel') -and ($MicLevel -ne $radioObj.MicLevel))
@@ -940,22 +1018,34 @@ function set-FlexRadio
 				if ($MicLevel -lt 0) { $MicLevel = 0 }
 				if ($MicLevel -gt 100) { $MicLevel = 100 }
 
-				$radioObj.set_Nickname($MicLevel)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify MicLevel"))
+					{
+					$radioObj.set_MicLevel($MicLevel)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('Mox') -and ($Mox -ne $radioObj.Mox))
 				{
-				$radioObj.set_Mox($Mox)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify Mox"))
+					{
+					$radioObj.set_Mox($Mox)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('Nickname') -and ($Nickname -ne $radioObj.Nickname))
 				{
-				$radioObj.set_Nickname($Nickname)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify Nickname"))
+					{
+					$radioObj.set_Nickname($Nickname)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('RemoteOnEnabled') -and ($RemoteOnEnabled -ne $radioObj.RemoteOnEnabled))
 				{
-				$radioObj.set_RemoteOnEnabled($RemoteOnEnabled)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify RemoteOnEnabled"))
+					{
+					$radioObj.set_RemoteOnEnabled($RemoteOnEnabled)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('RFPower') -and ($RFPower -ne $radioObj.RFPower))
@@ -963,7 +1053,10 @@ function set-FlexRadio
 				if ($RFPower -lt 0) { $RFPower = 0 }
 				if ($RFPower -gt 100) { $RFPower = 100 }
 
-				$radioObj.set_RFPower($RFPower)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify RFPower"))
+					{
+					$radioObj.set_RFPower($RFPower)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('Screensaver') -and ($Screensaver -ne $radioObj.Screensaver))
@@ -973,23 +1066,35 @@ function set-FlexRadio
 					throw "Valid options for Screensaver are 'name' and 'callsign'."
 					}
 
-				$radioObj.set_Screensaver($Screensaver)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify Screensaver"))
+					{
+					$radioObj.set_Screensaver($Screensaver)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('ShowTxInWaterfall') -and ($ShowTxInWaterfall -ne $radioObj.ShowTxInWaterfall))
 				{
-				$radioObj.set_ShowTxInWaterfall($ShowTxInWaterfall)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify ShowTxInWaterfall"))
+					{
+					$radioObj.set_ShowTxInWaterfall($ShowTxInWaterfall)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('SnapTune') -and ($SnapTune -ne $radioObj.SnapTune))
 				{
-				$radioObj.set_SnapTune($SnapTune)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SnapTune"))
+					{
+					$radioObj.set_SnapTune($SnapTune)
+					}
 				}
 
 
 			if ($PSBoundParameters.ContainsKey('TNFEnabled') -and ($TNFEnabled -ne $radioObj.TNFEnabled))
 				{
-				$radioObj.set_TNFEnabled($TNFEnabled)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TNFEnabled"))
+					{
+					$radioObj.set_TNFEnabled($TNFEnabled)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('TunePower') -and ($TunePower -ne $radioObj.TunePower))
@@ -997,27 +1102,42 @@ function set-FlexRadio
 				if ($TunePower -lt 0) { $TunePower = 0 }
 				if ($TunePower -gt 100) { $TunePower = 100 }
 
-				$radioObj.set_TunePower($TunePower)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TunePower"))
+					{
+					$radioObj.set_TunePower($TunePower)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('TXReqACCEnabled') -and ($TXReqACCEnabled -ne $radioObj.TXReqACCEnabled))
 				{
-				$radioObj.set_TXReqACCEnabled($TXReqACCEnabled)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXReqACCEnabled"))
+					{
+					$radioObj.set_TXReqACCEnabled($TXReqACCEnabled)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('TXReqACCPolarity') -and ($TXReqACCPolarity -ne $radioObj.TXReqACCPolarity))
 				{
-				$radioObj.set_TXReqACCPolarity($TXReqACCPolarity)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXReqACCPolarity"))
+					{
+					$radioObj.set_TXReqACCPolarity($TXReqACCPolarity)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('TXReqRCAEnabled') -and ($TXReqRCAEnabled -ne $radioObj.TXReqRCAEnabled))
 				{
-				$radioObj.set_TXReqRCAEnabled($TXReqRCAEnabled)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXReqRCAEnabled"))
+					{
+					$radioObj.set_TXReqRCAEnabled($TXReqRCAEnabled)
+					}
 				}
 
 			if ($PSBoundParameters.ContainsKey('TXReqRCAPolarity') -and ($TXReqRCAPolarity -ne $radioObj.TXReqRCAPolarity))
 				{
-				$radioObj.set_TXReqRCAPolarity($TXReqRCAPolarity)
+				if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXReqRCAPolarity"))
+					{
+					$radioObj.set_TXReqRCAPolarity($TXReqRCAPolarity)
+					}
 				}
 			}
 		}
