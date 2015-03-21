@@ -108,6 +108,9 @@ function export-FlexDatabase
                     }
                 }
 
+            # get saved profiles
+            $flexProfiles = get-FlexProfile -Serial $radioObj.serial
+
             # build metadata file
             $metaFile = "meta_data"
             $metaFullPath = join-path $path $metaFile
@@ -121,16 +124,64 @@ function export-FlexDatabase
 
             if (($pscmdlet.parametersetname -eq "p1") -or $GlobalProfiles)  # p1 = backup everything
                 {
-                $metaArr += "GLOBAL_PROFILES^Main^"
+                $globalProfilesToUse = $null
+
+                $globalProfilesToUse = $flexProfiles | ? { $_.ProfileType -eq "Global" }
+
+                $metaString = "GLOBAL_PROFILES^"
+
+                foreach ($globalProfile in $globalProfilesToUse)
+                    {
+                    if (($globalProfile.Name -ne "") -and ($globalProfile -ne $null))
+                        {
+                        $metaString += $globalProfile.Name + "^"
+                        }
+                    }
+
+                write-verbose "Global profile string: $metaString"
+
+                $metaArr += $metaString
                 }
             if (($pscmdlet.parametersetname -eq "p1") -or $TXProfiles)
-                {
-                $metaArr += "TX_PROFILES^Main^"
+                {   
+                $txProfilesToUse = $null
+
+                $txProfilesToUse = $flexProfiles | ? { ($_.ProfileType -eq "TX") -and ($_.Name -notmatch "^RadioSport|^Default|\*") }
+
+                $metaString = "TX_PROFILES^"
+
+                foreach ($txProfile in $txProfilesToUse)
+                    {
+                    if (($txProfile.Name -ne "") -and ($txProfile -ne $null))
+                        {
+                        $metaString += $txProfile.Name + "^"
+                        }
+                    }
+
+                write-verbose "TX profile string: $metaString"
+
+                $metaArr += $metaString
                 }
             if (($pscmdlet.parametersetname -eq "p1") -or $Memories)
                 {
                 $exportMemories = $true
-                $metaArr += "MEMORIES^KI4TTZ|^"
+
+                $memoryOwners = get-FlexMemory -Serial $radioObj.Serial | group Owner | % { $_.Name }
+
+                $metaString = "MEMORIES^"
+
+                foreach ($owner in $memoryOwners)
+                    {
+                    if (($owner -ne "") -and ($owner -ne $null))
+                        {
+                        # no idea what the pipe '|' char is used for, but looks like it needs to be there.
+                        $metaString += $owner + "|^"
+                        }
+                    }
+
+                write-verbose "Memory profile string: $metaString"
+
+                $metaArr += $metaString
                 }
             if (($pscmdlet.parametersetname -eq "p1") -or $BandPersistence)
                 {
