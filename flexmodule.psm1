@@ -244,7 +244,7 @@ function disconnect-FlexRadio
 						}
 
 					$count++
-					
+
 					start-sleep -milliseconds 500
 					}
 				}
@@ -1321,6 +1321,64 @@ function get-FlexProfile
 	}
 
 
+function get-FlexMemory
+	{
+	[CmdletBinding(DefaultParameterSetName="p0",
+		SupportsShouldProcess=$true,
+		ConfirmImpact="Low")]
+	param(
+		[Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
+		[string]$Serial
+		)
+
+	begin { }
+
+	process 
+		{
+		if (-not $Serial)
+			{
+			if ($global:FlexRadios.count -eq 1)
+				{
+				write-verbose "One FlexRadio found. Using it."
+				$Serial = $global:FlexRadios[0].serial
+				}
+			else
+				{
+			    throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
+				}
+			}
+
+		foreach ($radio in $Serial)
+			{
+			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
+
+			write-verbose "Serial: $($radioObj.serial)"
+
+			if (-not $radioObj.serial)
+				{
+				continue
+				}
+			
+			write-verbose "Radio connected: $($radioObj.connected)"
+
+			if ($radioObj.Connected -eq $false)
+				{
+				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use connect-flexradio to establish a new connection."
+				}
+
+			if (-not $radioObj.MemoryList)
+				{
+				write-warning "No saved memories found or SmartSDR may not be running."
+				}
+
+			$radioObj.MemoryList
+			}
+		}
+
+	end { }
+	}
+
+
 export-modulemember -function get-FlexRadio
 export-modulemember -function set-FlexRadio
 export-modulemember -function set-FlexSliceReceiver
@@ -1333,4 +1391,5 @@ export-modulemember -function get-flexpacket
 export-modulemember -function get-packet
 export-modulemember -function get-flexlatestfolderpath
 export-modulemember -function get-FlexProfile
+export-modulemember -function get-FlexMemory
 export-modulemember -function export-FlexDatabase
