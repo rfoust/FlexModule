@@ -166,16 +166,20 @@ function export-FlexDatabase
                 {
                 $exportMemories = $true
 
-                $memoryOwners = get-FlexMemory -Serial $radioObj.Serial | group Owner | % { $_.Name }
+                $memoryOwners = get-FlexMemory -Serial $radioObj.Serial | group Owner,Group | % { $_.Name }
 
                 $metaString = "MEMORIES^"
 
-                foreach ($owner in $memoryOwners)
+                foreach ($OwnerAndGroup in $memoryOwners)
                     {
+                    $owner = $null
+                    $group = $null
+
+                    $owner,$group = $OwnerAndGroup -split ", "
+
                     if (($owner -ne "") -and ($owner -ne $null))
                         {
-                        # no idea what the pipe '|' char is used for, but looks like it needs to be there.
-                        $metaString += $owner + "|^"
+                        $metaString += "$owner|$group^"
                         }
                     }
 
