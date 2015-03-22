@@ -100,6 +100,9 @@ function set-FlexPanadapter
         [double]$CenterFreq,
 
         [Parameter(ParameterSetName="p0")]
+        [double]$ClickTune,
+
+        [Parameter(ParameterSetName="p0")]
         [int]$DAXIQChannel,
 
         [Parameter(ParameterSetName="p0")]
@@ -232,6 +235,14 @@ function set-FlexPanadapter
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CenterFreq"))
                     {
                     $panadapter.set_CenterFreq($CenterFreq)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('ClickTune') -and ($ClickTune -ne $panadapter.ClickTune))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify ClickTune"))
+                    {
+                    $panadapter.ClickTuneRequest($ClickTune)
                     }
                 }
 
