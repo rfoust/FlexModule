@@ -10,7 +10,7 @@ To install -- Clone this repo to an appropriate Modules folder in Powershell, fo
 
 If you're running a recent version of Powershell, just run 'get-flexradio' and it should show your FlexRadio 6000 series radio.  Run 'connect-flexradio' to connect to it.  Other get/set functions are available and are in various states of development. Some work, some don't.
 
-To see all of the cmdlets available in this module, run "Get-Command | ? { $_.name -like "*-Flex*" }" and you will be provided with a list.
+To see all of the cmdlets available in this module, run "Get-Command | ? { $_.name -like "\*-Flex\*" }" and you will be provided with a list.
 
 If you have questions, feel free to ask (rfoust at gmail.com). If you are interested in a feature that I haven't implemented yet, let me know and I'll probably make it a priority. This is a "proof-of-concept" and "for-fun" project.
 
