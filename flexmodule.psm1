@@ -161,17 +161,18 @@ function export-FlexProfileOLD
 #>
 
 
-export-modulemember -function get-FlexRadio
-export-modulemember -function set-FlexRadio
-export-modulemember -function set-FlexSliceReceiver
-export-modulemember -function set-FlexPanadapter
-export-modulemember -function connect-flexradio
-export-modulemember -function disconnect-flexradio
-export-modulemember -function get-FlexSliceReceiver
-export-modulemember -function get-FlexPanadapter
-export-modulemember -function get-flexpacket
-export-modulemember -function get-packet
-export-modulemember -function get-flexlatestfolderpath
-export-modulemember -function get-FlexProfile
+# main functions
+export-modulemember -function *-FlexRadio
+export-modulemember -function *-FlexSliceReceiver
+export-modulemember -function *-FlexPanadapter
+export-modulemember -function *-FlexProfile
 export-modulemember -function *-FlexMemory
-export-modulemember -function export-FlexDatabase
+export-modulemember -function *-FlexDatabase
+
+# packet sniffer functions
+export-modulemember -function get-FlexPacket
+export-modulemember -function get-Packet
+
+# helper functions
+export-modulemember -function get-FlexLatestFolderPath
+
