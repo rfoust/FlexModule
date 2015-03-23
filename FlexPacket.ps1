@@ -119,7 +119,7 @@ function get-flexpacket
         ConfirmImpact="Low")]
     param(
         [Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
-        $serial,
+        [string]$serial,
 
         [Parameter(ParameterSetName="p0",Position=1)]
         [string]$LocalIP
@@ -129,21 +129,23 @@ function get-flexpacket
 
     process
         {
-        if (-not $serial)
+        if (-not $Serial)
             {
-            if ($global:FlexRadios.count -eq 1)
+            $radios = get-FlexRadio
+
+            if ($radios.count -eq 1)
                 {
                 write-verbose "One FlexRadio found. Using it."
-                $serial = $global:FlexRadios[0].serial
+                $Serial = $radios[0].serial
                 }
             else
                 {
-                throw "Specify radio to use by serial number with -serial argument, or use pipeline."
+                throw "Specify radio to use by serial number with -Serial argument, or use pipeline."
                 }
             }
 
 
-        $radioObj = $global:FlexRadios | ? { $_.serial -eq $serial }
+        $radioObj = get-FlexRadio -Serial:$serial
 
         write-verbose "Serial: $($radioObj.serial)"
 
