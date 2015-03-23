@@ -169,6 +169,7 @@ export-modulemember -function *-FlexPanadapter
 export-modulemember -function *-FlexProfile
 export-modulemember -function *-FlexMemory
 export-modulemember -function *-FlexDatabase
+export-modulemember -function *-FlexTNF
 
 # packet sniffer functions
 export-modulemember -function get-FlexPacket
