@@ -178,4 +178,4 @@ export-modulemember -function get-Packet
 # helper functions
 export-modulemember -function get-FlexLatestFolderPath
 export-modulemember -function get-FlexControlLog
-
+export-modulemember -function get-FlexCommand

@@ -23,3 +23,8 @@ function get-FlexControlLog
             }
         }
     }
+
+function get-FlexCommand
+    {
+    Get-Command | ? { $_.name -like "*-Flex*" }
+    }
