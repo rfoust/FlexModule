@@ -179,3 +179,4 @@ export-modulemember -function get-Packet
 export-modulemember -function get-FlexLatestFolderPath
 export-modulemember -function get-FlexControlLog
 export-modulemember -function get-FlexCommand
+export-modulemember -function start-FlexScreenSaver
