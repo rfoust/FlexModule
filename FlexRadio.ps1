@@ -270,6 +270,12 @@ function set-FlexRadio
         [int]$APFQFactor,
 
         [Parameter(ParameterSetName="p0")]
+        [bool]$BinauralRX,
+
+        [Parameter(ParameterSetName="p0")]
+        [double]$CalFreq,
+
+        [Parameter(ParameterSetName="p0")]
         [string]$Callsign,
 
         [Parameter(ParameterSetName="p0")]
@@ -294,7 +300,13 @@ function set-FlexRadio
         [bool]$CWIambicModeB,
 
         [Parameter(ParameterSetName="p0")]
+        [bool]$CWLEnabled,
+
+        [Parameter(ParameterSetName="p0")]
         [int]$CWPitch,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$CWSidetone,
 
         [Parameter(ParameterSetName="p0")]
         [int]$CWSpeed,
@@ -307,6 +319,9 @@ function set-FlexRadio
 
         [Parameter(ParameterSetName="p0")]
         [string]$DAXOn,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$FreqErrorPPB,
 
         [Parameter(ParameterSetName="p0")]
         [int]$HeadphoneGain,
@@ -354,13 +369,58 @@ function set-FlexRadio
         [bool]$ShowTxInWaterfall,
 
         [Parameter(ParameterSetName="p0")]
+        [bool]$SimpleVOXEnable,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$SimpleVOXLevel,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$SimpleVOXDelay,
+
+        [Parameter(ParameterSetName="p0")]
         [bool]$SnapTune,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$SpeechProcessorEnable,
+
+        [Parameter(ParameterSetName="p0")]
+        [uint32]$SpeechProcessorLevel,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$SSBPeakControlEnable,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$StartOffsetEnabled,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$SyncCWX,
 
         [Parameter(ParameterSetName="p0")]
         [bool]$TNFEnabled,
 
         [Parameter(ParameterSetName="p0")]
         [int]$TunePower,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$TXCWMonitorGain,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$TXSBMonitorGain,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$TXCWMonitorPan,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$TXSBMonitorPan,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$TXFilterLow,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$TXFilterHigh,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$TXMonitor,
 
         [Parameter(ParameterSetName="p0")]
         [bool]$TXReqACCEnabled,
@@ -372,8 +432,10 @@ function set-FlexRadio
         [bool]$TXReqRCAEnabled,
 
         [Parameter(ParameterSetName="p0")]
-        [bool]$TXReqRCAPolarity
+        [bool]$TXReqRCAPolarity,
 
+        [Parameter(ParameterSetName="p0")]
+        [bool]$TXTune
         )
 
     begin { }
@@ -460,6 +522,22 @@ function set-FlexRadio
                     }
                 }
 
+            if ($PSBoundParameters.ContainsKey('BinauralRX') -and ($BinauralRX -ne $radioObj.BinauralRX))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify BinauralRX"))
+                    {
+                    $radioObj.set_BinauralRX($BinauralRX)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('CalFreq') -and ($CalFreq -ne $radioObj.CalFreq))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CalFreq"))
+                    {
+                    $radioObj.set_CalFreq($CalFreq)
+                    }
+                }
+
             if ($PSBoundParameters.ContainsKey('Callsign') -and ($Callsign -ne $radioObj.Callsign))
                 {
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify Callsign"))
@@ -530,6 +608,14 @@ function set-FlexRadio
                     }
                 }
 
+            if ($PSBoundParameters.ContainsKey('CWLEnabled') -and ($CWLEnabled -ne $radioObj.CWLEnabled))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWL_Enabled"))
+                    {
+                    $radioObj.set_CWL_Enabled($CWLEnabled)
+                    }
+                }
+
             if ($PSBoundParameters.ContainsKey('CWPitch') -and ($CWPitch -ne $radioObj.CWPitch))
                 {
                 if ($CWPitch -lt 100) { $CWPitch = 100 }
@@ -549,6 +635,14 @@ function set-FlexRadio
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWSpeed"))
                     {
                     $radioObj.set_CWSpeed($CWSpeed)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('CWSidetone') -and ($CWSidetone -ne $radioObj.CWSidetone))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify CWSidetone"))
+                    {
+                    $radioObj.set_CWSidetone($CWSidetone)
                     }
                 }
 
@@ -573,6 +667,14 @@ function set-FlexRadio
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify DAXOn"))
                     {
                     $radioObj.set_DAXOn($DAXOn)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('FreqErrorPPB') -and ($FreqErrorPPB -ne $radioObj.FreqErrorPPB))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify FreqErrorPPB"))
+                    {
+                    $radioObj.set_FreqErrorPPB($FreqErrorPPB)
                     }
                 }
 
@@ -713,6 +815,30 @@ function set-FlexRadio
                     }
                 }
 
+            if ($PSBoundParameters.ContainsKey('SimpleVOXEnable') -and ($SimpleVOXEnable -ne $radioObj.SimpleVOXEnable))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SimpleVOXEnable"))
+                    {
+                    $radioObj.set_SimpleVOXEnable($SimpleVOXEnable)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('SimpleVOXLevel') -and ($SimpleVOXLevel -ne $radioObj.SimpleVOXLevel))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SimpleVOXLevel"))
+                    {
+                    $radioObj.set_SimpleVOXLevel($SimpleVOXLevel)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('SimpleVOXDelay') -and ($SimpleVOXDelay -ne $radioObj.SimpleVOXDelay))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SimpleVOXDelay"))
+                    {
+                    $radioObj.set_SimpleVOXDelay($SimpleVOXDelay)
+                    }
+                }
+
             if ($PSBoundParameters.ContainsKey('SnapTune') -and ($SnapTune -ne $radioObj.SnapTune))
                 {
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SnapTune"))
@@ -721,6 +847,45 @@ function set-FlexRadio
                     }
                 }
 
+            if ($PSBoundParameters.ContainsKey('SpeechProcessorEnable') -and ($SpeechProcessorEnable -ne $radioObj.SpeechProcessorEnable))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SpeechProcessorEnable"))
+                    {
+                    $radioObj.set_SpeechProcessorEnable($SpeechProcessorEnable)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('SpeechProcessorLevel') -and ($SpeechProcessorLevel -ne $radioObj.SpeechProcessorLevel))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SpeechProcessorLevel"))
+                    {
+                    $radioObj.set_SpeechProcessorLevel($SpeechProcessorLevel)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('SSBPeakControlEnable') -and ($SSBPeakControlEnable -ne $radioObj.SSBPeakControlEnable))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SSBPeakControlEnable"))
+                    {
+                    $radioObj.set_SSBPeakControlEnable($SSBPeakControlEnable)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('StartOffsetEnabled') -and ($StartOffsetEnabled -ne $radioObj.StartOffsetEnabled))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify StartOffsetEnabled"))
+                    {
+                    $radioObj.set_StartOffsetEnabled($StartOffsetEnabled)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('SyncCWX') -and ($SyncCWX -ne $radioObj.SyncCWX))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify SyncCWX"))
+                    {
+                    $radioObj.set_SyncCWX($SyncCWX)
+                    }
+                }
 
             if ($PSBoundParameters.ContainsKey('TNFEnabled') -and ($TNFEnabled -ne $radioObj.TNFEnabled))
                 {
@@ -738,6 +903,62 @@ function set-FlexRadio
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TunePower"))
                     {
                     $radioObj.set_TunePower($TunePower)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXMonitor') -and ($TXMonitor -ne $radioObj.TXMonitor))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXMonitor"))
+                    {
+                    $radioObj.set_TXMonitor($TXMonitor)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXCWMonitorGain') -and ($TXCWMonitorGain -ne $radioObj.TXCWMonitorGain))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXCWMonitorGain"))
+                    {
+                    $radioObj.set_TXCWMonitorGain($TXCWMonitorGain)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXSBMonitorGain') -and ($TXSBMonitorGain -ne $radioObj.TXSBMonitorGain))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXSBMonitorGain"))
+                    {
+                    $radioObj.set_TXSBMonitorGain($TXSBMonitorGain)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXCWMonitorPan') -and ($TXCWMonitorPan -ne $radioObj.TXCWMonitorPan))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXCWMonitorPan"))
+                    {
+                    $radioObj.set_TXCWMonitorPan($TXCWMonitorPan)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXSBMonitorPan') -and ($TXSBMonitorPan -ne $radioObj.TXSBMonitorPan))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXSBMonitorPan"))
+                    {
+                    $radioObj.set_TXSBMonitorPan($TXSBMonitorPan)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXFilterLow') -and ($TXFilterLow -ne $radioObj.TXFilterLow))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXFilterLow"))
+                    {
+                    $radioObj.set_TXFilterLow($TXFilterLow)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXFilterHigh') -and ($TXFilterHigh -ne $radioObj.TXFilterHigh))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXFilterHigh"))
+                    {
+                    $radioObj.set_TXFilterHigh($TXFilterHigh)
                     }
                 }
 
@@ -770,6 +991,14 @@ function set-FlexRadio
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXReqRCAPolarity"))
                     {
                     $radioObj.set_TXReqRCAPolarity($TXReqRCAPolarity)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('TXTune') -and ($TXTune -ne $radioObj.TXTune))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify TXTune"))
+                    {
+                    $radioObj.set_TXTune($TXTune)
                     }
                 }
             }
