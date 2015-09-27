@@ -171,6 +171,7 @@ export-modulemember -function *-FlexMemory
 export-modulemember -function *-FlexDatabase
 export-modulemember -function *-FlexTNF
 export-modulemember -function *-FlexGPS
+export-modulemember -function *-FlexVersion
 
 # packet sniffer functions
 export-modulemember -function get-FlexPacket
