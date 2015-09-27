@@ -376,6 +376,9 @@ function set-FlexRadio
         [int]$FreqErrorPPB,
 
         [Parameter(ParameterSetName="p0")]
+        [bool]$FullDuplexEnabled,
+
+        [Parameter(ParameterSetName="p0")]
         [int]$HeadphoneGain,
 
         [Parameter(ParameterSetName="p0")]
@@ -727,6 +730,14 @@ function set-FlexRadio
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify FreqErrorPPB"))
                     {
                     $radioObj.set_FreqErrorPPB($FreqErrorPPB)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('FullDuplexEnabled') -and ($FullDuplexEnabled -ne $radioObj.FullDuplexEnabled))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify FullDuplexEnabled"))
+                    {
+                    $radioObj.set_FullDuplexEnabled($FullDuplexEnabled)
                     }
                 }
 
