@@ -61,47 +61,6 @@ function get-FlexRadio
     end { }
     }
 
-<# - no longer used
-function findFlexRadioIndexNumber
-    {
-    [CmdletBinding(DefaultParameterSetName="p0",
-        SupportsShouldProcess=$true,
-        ConfirmImpact="Low")]
-    param(
-        [Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
-        [ValidateScript({$_.serial})]  # must have serial number
-        $RadioObject
-        )
-
-    begin { }
-
-    process 
-        {
-        foreach ($radio in $RadioObject)
-            {
-            if ($radio -eq $null)
-                {
-                continue
-                }
-
-            for ($loop = 0; $loop -le ($global:flexradios.count - 1); $loop++)
-                {
-                if ($global:flexradios[$loop].serial -eq $radio.serial)
-                    {
-                    $radioObj = new-object psobject
-
-                    $radioObj | add-member -MemberType NoteProperty -Name "Serial" -Value $radio.serial
-                    $radioObj | add-member -MemberType NoteProperty -Name "Index" -Value $loop
-
-                    $radioObj
-                    }
-                }
-            }
-        }
-
-    end { }
-    }
-#>
 
 function connect-FlexRadio
     {
