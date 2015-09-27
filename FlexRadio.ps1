@@ -6,9 +6,7 @@
 
 function get-FlexRadio
     {
-    [CmdletBinding(DefaultParameterSetName="p0",
-        SupportsShouldProcess=$true,
-        ConfirmImpact="Low")]
+    [CmdletBinding(DefaultParameterSetName="p0")]
     param(
         [Parameter(ParameterSetName="p0",Position=0, ValueFromPipeline = $true)]
         [string]$Serial,
