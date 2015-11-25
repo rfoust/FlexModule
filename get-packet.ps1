@@ -104,11 +104,14 @@ function get-packet
 		[switch]$silent
 		)
 
+	$packetCount = 0
+
 	$starttime = get-date
 	$byteIn = new-object byte[] 4
 	$byteOut = new-object byte[] 4
 	# $byteData = new-object byte[] 4096  # size of data
-	$byteData = new-object byte[] 65536  # size of data
+	# $byteData = new-object byte[] 65536  # size of data
+	$byteData = new-object byte[] 1024  # size of data
 
 	$byteIn[0] = 1  # this enables promiscuous mode (ReceiveAll)
 	$byteIn[1-3] = 0
@@ -134,6 +137,16 @@ function get-packet
 		}
 	#>
 
+	$wid = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+	$prp = new-object System.Security.Principal.WindowsPrincipal($wid)
+	$adm = [System.Security.Principal.WindowsBuiltInRole]::Administrator
+	$IsAdmin = $prp.IsInRole($adm)
+
+	if (-not $IsAdmin)
+		{
+		throw "Launch Powershell with elevated (administrator) rights and try again."
+		}
+	
 	if (-not $localIP)
 		{
 		# this is probably a better way
@@ -253,46 +266,75 @@ function get-packet
 			continue
 			}
 		
-		#$stream = [system.io.bufferedstream]([system.net.sockets.NetworkStream]($socket), 8192)
+		++$packetCount
+
+		if ($packetCount % 25 -eq 0)
+			{
+			write-verbose "Processed $packetCount packets."
+			}
+
+		# $stream = [system.io.bufferedstream]([system.net.sockets.NetworkStream]($socket), 8192)
 
 		# receive data
-		$rcv = $socket.receive($byteData,0,$byteData.length,[net.sockets.socketflags]::None)
+		$rcv = $null
+
+		try
+			{
+			$rcv = $socket.receive($byteData,0,$byteData.length,[net.sockets.socketflags]::None)
+			}
+		catch { }
+
+		if (-not $rcv)
+			{
+			continue
+			}
 
 		# decode the header (see RFC 791 or this will make no sense)
 		$MemoryStream = new-object System.IO.MemoryStream($byteData,0,$rcv)
 		$BinaryReader = new-object System.IO.BinaryReader($MemoryStream)
-		#$BinaryReader = new-object System.IO.BinaryReader($stream)
+		# $BinaryReader = new-object System.IO.BinaryReader($stream)
 
-		$byteArr = $nulll
-		$byteArr = $BinaryReader.ReadBytes(10)
+		# $byteArr = $null
+		# $byteArr = $BinaryReader.ReadBytes(10)
 
 		# First 8 bits of IP header contain version & header length
-		#$VersionAndHeaderLength = $BinaryReader.ReadByte()
-		$VersionAndHeaderLength = $byteArr[0]
+		$VersionAndHeaderLength = $BinaryReader.ReadByte()
+		# $VersionAndHeaderLength = $byteArr[0]
 
 		# Next 8 bits contain the TOS (type of service)
-		#$TypeOfService = $BinaryReader.ReadByte()
-		$TypeOfService = $byteArr[1]
+		$TypeOfService = $BinaryReader.ReadByte()
+		# $TypeOfService = $byteArr[1]
 
 		# total length of header and payload
-		#$TotalLength = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
-		$TotalLength = NetworkToHostUInt16 $byteArr[2..3]
+		$TotalLength = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
+		# $TotalLength = NetworkToHostUInt16 $byteArr[2..3]
 
-		#$Identification = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
-		$Identification = NetworkToHostUInt16 $byteArr[4..5]
-		#$FlagsAndOffset = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
-		$FlagsAndOffset = NetworkToHostUInt16 $byteArr[6..7]
-		#$TTL = $BinaryReader.ReadByte()
-		$TTL = $byteArr[8]
-		#$ProtocolNumber = $BinaryReader.ReadByte()
-		$ProtocolNumber = $byteArr[9]
+		$Identification = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
+		# $Identification = NetworkToHostUInt16 $byteArr[4..5]
+		$FlagsAndOffset = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
+		# $FlagsAndOffset = NetworkToHostUInt16 $byteArr[6..7]
+		$TTL = $BinaryReader.ReadByte()
+		# $TTL = $byteArr[8]
+		$ProtocolNumber = $BinaryReader.ReadByte()
+		# $ProtocolNumber = $byteArr[9]
 		$Checksum = [Net.IPAddress]::NetworkToHostOrder($BinaryReader.ReadInt16())
 
 		$SourceIPAddress = $BinaryReader.ReadUInt32()
 		$SourceIPAddress = [System.Net.IPAddress]$SourceIPAddress
 		$DestinationIPAddress = $BinaryReader.ReadUInt32()
 		$DestinationIPAddress = [System.Net.IPAddress]$DestinationIPAddress
+<#
+		# abort if not a packet we're looking for
+		if (($Protocol -eq "flex") -and ($ProtocolNumber -ne 6) -or
+				(($SourceIPAddress -ne $remoteIP -or
+				$DestinationIPAddress -ne $remoteIP)))
+			{
+			$BinaryReader.Close()
+			$memorystream.Close()
 
+			continue
+			}
+#>
 		# Get the IP version number from the "left side" of the Byte
 		$ipVersion = [int]"0x$(('{0:X}' -f $VersionAndHeaderLength)[0])"
 
