@@ -303,10 +303,16 @@ function set-FlexSliceReceiver
         [int]$FilterLow,
 
         [Parameter(ParameterSetName="p0")]
+        [int]$FMDeviation,
+
+        [Parameter(ParameterSetName="p0")]
         [double]$FMRepeaterOffsetFreq,
 
         [Parameter(ParameterSetName="p0")]
         [string]$FMToneValue,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$FmTx1750,
 
         [Parameter(ParameterSetName="p0")]
         [double]$Freq,
@@ -561,6 +567,14 @@ function set-FlexSliceReceiver
                         }
                     }
 
+                if ($PSBoundParameters.ContainsKey('FMDeviation') -and ($FMDeviation -ne $slice.FMDeviation))
+                    {
+                    if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify FMDeviation on Slice #$Index"))
+                        {
+                        $slice.set_FMDeviation($FMDeviation)
+                        }
+                    }
+
                 if ($PSBoundParameters.ContainsKey('FMRepeaterOffsetFreq') -and ($FMRepeaterOffsetFreq -ne $slice.FMRepeaterOffsetFreq))
                     {
                     if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify FMRepeaterOffsetFreq on Slice #$Index"))
@@ -574,6 +588,14 @@ function set-FlexSliceReceiver
                     if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify FMToneValue on Slice #$Index"))
                         {
                         $slice.set_FMToneValue($FMToneValue)
+                        }
+                    }
+
+                if ($PSBoundParameters.ContainsKey('FmTx1750') -and ($FmTx1750 -ne $slice.FmTx1750))
+                    {
+                    if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify FmTx1750 on Slice #$Index"))
+                        {
+                        $slice.set_FMTX1750($FmTx1750)
                         }
                     }
 
