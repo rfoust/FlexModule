@@ -245,6 +245,12 @@ function set-FlexPanadapter
         [double]$LowDbm,
 
         [Parameter(ParameterSetName="p0")]
+        [int]$NBLevel,
+
+        [Parameter(ParameterSetName="p0")]
+        [bool]$NBOn,
+
+        [Parameter(ParameterSetName="p0")]
         [string]$Preamp,
 
         [Parameter(ParameterSetName="p0")]
@@ -415,6 +421,22 @@ function set-FlexPanadapter
                 if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify LowDbm"))
                     {
                     $panadapter.set_LowDbm($LowDbm)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('NBLevel') -and ($NBLevel -ne $panadapter.NBLevel))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify NBLevel"))
+                    {
+                    $panadapter.set_NBLevel($NBLevel)
+                    }
+                }
+
+            if ($PSBoundParameters.ContainsKey('NBOn') -and ($NBOn -ne $panadapter.NBOn))
+                {
+                if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify NBOn"))
+                    {
+                    $panadapter.set_NBOn($NBOn)
                     }
                 }
 
