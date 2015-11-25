@@ -288,6 +288,12 @@ function set-FlexSliceReceiver
         [string]$DemodMode,
 
         [Parameter(ParameterSetName="p0")]
+        [int]$DIGLOffset,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$DIGUOffset,
+
+        [Parameter(ParameterSetName="p0")]
         [bool]$EqCompBypass,
 
         [Parameter(ParameterSetName="p0")]
@@ -343,6 +349,12 @@ function set-FlexSliceReceiver
 
         [Parameter(ParameterSetName="p0")]
         [bool]$RITOn,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$RTTYMark,
+
+        [Parameter(ParameterSetName="p0")]
+        [int]$RTTYShift,
 
         [Parameter(ParameterSetName="p0")]
         [string]$RXAnt,
@@ -509,6 +521,22 @@ function set-FlexSliceReceiver
                         }
                     }
 
+                if ($PSBoundParameters.ContainsKey('DIGLOffset') -and ($DIGLOffset -ne $slice.DIGLOffset))
+                    {
+                    if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify DIGLOffset on Slice #$Index"))
+                        {
+                        $slice.set_DIGLOffset($DIGLOffset)
+                        }
+                    }
+
+                if ($PSBoundParameters.ContainsKey('DIGUOffset') -and ($DIGUOffset -ne $slice.DIGUOffset))
+                    {
+                    if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify DIGUOffset on Slice #$Index"))
+                        {
+                        $slice.set_DIGUOffset($DIGUOffset)
+                        }
+                    }
+
                 if ($PSBoundParameters.ContainsKey('EqCompBypass') -and ($EqCompBypass -ne $slice.EqCompBypass))
                     {
                     if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify EqCompBypass on Slice #$Index"))
@@ -650,6 +678,22 @@ function set-FlexSliceReceiver
                     if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify RITOn on Slice #$Index"))
                         {
                         $slice.set_RITOn($RITOn)
+                        }
+                    }
+
+                if ($PSBoundParameters.ContainsKey('RTTYMark') -and ($RTTYMark -ne $slice.RTTYMark))
+                    {
+                    if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify RTTYMark on Slice #$Index"))
+                        {
+                        $slice.set_RTTYMark($RTTYMark)
+                        }
+                    }
+
+                if ($PSBoundParameters.ContainsKey('RTTYShift') -and ($RTTYShift -ne $slice.RTTYShift))
+                    {
+                    if ($pscmdlet.ShouldProcess($radioObj.Serial,"Modify RTTYShift on Slice #$Index"))
+                        {
+                        $slice.set_RTTYShift($RTTYShift)
                         }
                     }
 
