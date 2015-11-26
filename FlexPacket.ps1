@@ -112,17 +112,20 @@ function displayData ([string]$data)
     }
 
 # this is a packet sniffer function for flex radio packets
-function get-flexpacket
+function get-FlexPacket
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
         ConfirmImpact="Low")]
     param(
         [Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
-        [string]$serial,
+        [string]$Serial,
 
         [Parameter(ParameterSetName="p0",Position=1)]
-        [string]$LocalIP
+        [string]$LocalIP,
+
+        [Parameter(ParameterSetName="p0")]
+        [switch]$HidePing
         )
 
     begin { }
@@ -186,6 +189,9 @@ function get-flexpacket
         displayTime
         displaySource "*"
         write-host "Expect packet sniffer delays if a high amount of network traffic is expected." -foregroundcolor cyan
+
+        $pingHash = @{}
+        $pingCount = 0
 
         #get-packet | ? { ($_.source -eq "192.168.1.133" -or $_.destination -eq "192.168.1.133") -and ($_.protocol -eq "TCP")} | % {
         get-packet -protocol flex -LocalIP:$LocalIP -remoteIP $remoteIP | % {
@@ -251,30 +257,63 @@ function get-flexpacket
                         {
                         displayTime
                         displaySource "Radio"
-                        write-host "Version $($packetSubData)" -foregroundcolor green
+                        write-host "Version: $packetSubData" -foregroundcolor green
                         break
                         }
                     "H"
                         {
                         displayTime
                         displaySource "Radio"
-                        write-host "Handle received: $($packetSubData)" -foreground green
+                        write-host "Handle received: [$packetSubData]" -foreground green
                         break
                         }
                     "C" # command sent
                         {
+                        $sequence,$command = $packetSubData.split("|")
+
+                        if ($command -eq "ping")
+                            {
+                            $pingHash[$sequence] = get-date
+                            $pingCount++
+
+                            if ($pingCount % 50 -eq 0)
+                                {
+                                displayTime
+                                displaySource "*"
+                                displayData "$pingCount keepalive pings have been seen."
+
+                                displayTime
+                                displaySource "*"
+
+                                if ($pingHash.count)
+                                    {
+                                    displayData "$($pingHash.count) ping(s) haven't been acknowledged."
+                                    }
+                                }
+
+                            break
+                            }
+
                         displayTime
                         displaySource "Local"
-                        $sequence,$command = $packetSubData.split("|")
-                        displayData "#$sequence - $command"
+                        displayData "{$sequence} $command"
                         break
                         }
                     "R"
                         {
+                        $sequence,$command = $packetSubData.split("|")
+
+                        if ($pingHash[$sequence])
+                            {
+                            $pingHash.Remove($sequence)
+
+                            break
+                            }
+
                         displayTime
                         displaySource "RadioResponse"
-                        $sequence,$command = $packetSubData.split("|")
-                        displayData "#$sequence - $command"
+                        
+                        displayData "{$sequence} $command"
                         break
                         }
                     "S"
@@ -282,7 +321,7 @@ function get-flexpacket
                         displayTime
                         displaySource "RadioStatus"
                         $handle,$command = $packetSubData.split("|")
-                        displayData "($handle) - $command"
+                        displayData "[$handle] $command"
                         break
                         }
                     "M"

@@ -110,12 +110,10 @@ function get-packet
 	$byteIn = new-object byte[] 4
 	$byteOut = new-object byte[] 4
 	# $byteData = new-object byte[] 4096  # size of data
-	# $byteData = new-object byte[] 65536  # size of data
-	$byteData = new-object byte[] 1024  # size of data
+	#$byteData = new-object byte[] 65536  # size of data
+	$byteData = new-object byte[] 750  # size of data - too large and we won't process packets fast enough
 
 	$byteIn[0] = 1  # this enables promiscuous mode (ReceiveAll)
-	$byteIn[1-3] = 0
-	$byteOut[0-3] = 0
 
 	# TCP Control Bits
 	$TCPFIN = [byte]0x01
@@ -177,10 +175,13 @@ function get-packet
 	# $socket.dontfragment = $true
 
 	# make the buffer big or we'll drop packets.
-	# $socket.ReceiveBufferSize = 819200
-	# $socket.ReceiveBufferSize = 4096000
-	$socket.ReceiveBufferSize = 8192000
-	$socket.SendBufferSize = 8192000
+	$socket.ReceiveBufferSize = 500000000	# 500mb
+	#$socket.SendBufferSize = 8192000
+
+	$bufferWarning = $socket.ReceiveBufferSize * .75
+	$bufferError = $socket.ReceiveBufferSize * .95
+	$warningNotified = $false
+	$errorNotified = $false
 
 	$ipendpoint = new-object system.net.ipendpoint([net.ipaddress]"$localIP",0)
 	$socket.bind($ipendpoint)
@@ -268,9 +269,27 @@ function get-packet
 		
 		++$packetCount
 
-		if ($packetCount % 25 -eq 0)
+		if ($packetCount % 1000 -eq 0)
 			{
-			write-verbose "Processed $packetCount packets."
+			write-verbose "Processed $packetCount packets, bytes available to read: $($socket.available)"
+			}
+
+		if ((-not $warningNotified) -and ($socket.Available -ge $bufferWarning))
+			{
+			$warningNotified = $true
+
+			displayTime
+			displaySource "*"
+			write-host "75% of socket buffer has been used. Unable to keep up with incoming network data. $($socket.available)" -foregroundcolor yellow
+			}
+
+		if ((-not $errorNotified) -and ($socket.Available -ge $bufferError) -and $warningNotified)
+			{
+			$errorNotified = $true
+
+			displayTime
+			displaySource "*"
+			write-host "95% of socket buffer has been used! Packet loss is expected now. $($socket.available)" -foregroundcolor red
 			}
 
 		# $stream = [system.io.bufferedstream]([system.net.sockets.NetworkStream]($socket), 8192)
