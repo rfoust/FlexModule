@@ -36,9 +36,19 @@ function get-flexlatestfolderpath
 
             if ($fullVersion)
                 {
+                $beta = $false
+
+                if ($fullVersion -match "Beta")
+                  {
+                  $beta = $true
+
+                  $fullVersion = $fullVersion -replace "Beta_",""
+                  }
+
                 $flexVersion = [version]($fullVersion -replace "v","")
 
                 $modifiedDir = $dir | add-member NoteProperty Version $flexVersion -passthru
+                $modifiedDir = $modifiedDir | add-member NoteProperty Beta $beta -passthru
 
                 $modifiedDirs += $modifiedDir
                 }
@@ -46,7 +56,15 @@ function get-flexlatestfolderpath
 
         if ($modifiedDirs)
             {
-            ($modifiedDirs | sort Version -desc)[0].fullname
+            $latest = $null
+            $latest = ($modifiedDirs | sort Version -desc)[0]
+
+            if ($latest.beta)
+              {
+              write-warning "FYI - Latest version of SmartSDR installed is a Beta version (v$($latest.Version))."
+              }
+
+            $latest.fullname
             }
         }
     }
@@ -60,7 +78,7 @@ function get-flexlibpath
 
     begin { }
 
-    process 
+    process
         {
         $flexDLL = $null
         $DLLdata = $null
