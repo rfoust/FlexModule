@@ -15,7 +15,7 @@ function Test-Win32() {
     return [IntPtr]::size -eq 4
 }
 
-function get-flexlatestfolderpath
+function Get-FlexLatestFolderPath
     {
     $flexRoot = "c:\program files\FlexRadio Systems"
 
@@ -69,7 +69,7 @@ function get-flexlatestfolderpath
         }
     }
 
-function get-flexlibpath
+function Get-FlexLibPath
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$false,
@@ -89,9 +89,13 @@ function get-flexlibpath
             {
             $flexDLL = $latestpath + "\FlexLib.dll"
 
+            write-verbose "Using: $flexDLL"
+
             if (test-path $flexDLL)
                 {
                 $DLLdata = [reflection.assemblyname]::getassemblyname($flexDLL)
+
+                write-verbose "ProcessorArchitecture: $($DLLdata.ProcessorArchitecture)"
 
                 if (($DLLdata.ProcessorArchitecture -ne "MSIL") -and (test-win64))  # x86 dll on 64 bit host?
                     {
@@ -144,5 +148,5 @@ function import-flexlib
         throw "Unable to locate FlexRadio FlexLib DLL, or DLL is incompatible with this architecture!"
         }
 
-    [flex.smoothlake.FlexLib.api]::init()
+    # [flex.smoothlake.FlexLib.api]::init()
     }

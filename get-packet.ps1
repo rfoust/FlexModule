@@ -221,10 +221,11 @@ function get-packet
 		if ($smartSDRdetected -eq $false -and $protocol -eq "flex")
 			{
 			$SmartSDRVersion = (get-process | ? { $_.processname -eq "SmartSDR" }).productversion
-			write-verbose "SmartSDRVersion: $SmartSDRVersion"
 
 			if ($SmartSDRVersion)
 				{
+				write-verbose "SmartSDRVersion: $SmartSDRVersion"
+				
 				displayTime
 				displaySource "*"
 				write-host "SmartSDR detected, version $SmartSDRVersion." -foregroundcolor cyan
@@ -235,10 +236,11 @@ function get-packet
 		if ($DAXdetected -eq $false -and $protocol -eq "flex")
 			{
 			$DAXversion = (get-process | ? { $_.processname -eq "DAX" }).productversion
-			write-verbose "DAXversion: $DAXversion"
 
 			if ($DAXversion)
 				{
+				write-verbose "DAXversion: $DAXversion"
+
 				displayTime
 				displaySource "*"
 				write-host "DAX detected, version $DAXversion." -foregroundcolor cyan
@@ -249,10 +251,11 @@ function get-packet
 		if ($CATdetected -eq $false -and $protocol -eq "flex")
 			{
 			$CATversion = (get-process | ? { $_.processname -eq "Cat" }).productversion
-			write-verbose "CATversion: $CATversion"
 
 			if ($CATversion)
 				{
+				write-verbose "CATversion: $CATversion"
+
 				displayTime
 				displaySource "*"
 				write-host "CAT detected, version $CATversion." -foregroundcolor cyan

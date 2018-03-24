@@ -14,6 +14,9 @@
 
 import-flexlib
 
+[flex.smoothlake.flexlib.api]::Init()
+[flex.smoothlake.flexlib.api]::ProgramName = "FlexModule"
+
 
 # profile functions need to be rewritten - flex added support for saved profiles since this was written
 <#
@@ -29,7 +32,7 @@ function get-FlexProfileOLD
 
 	begin { }
 
-	process 
+	process
 		{
 		#foreach ($radio in $RadioObject)
 		#	{
@@ -46,7 +49,7 @@ function get-FlexProfileOLD
 			if (-not (test-path $ProfileDir))
 				{
 				write-verbose "Path not found: $ProfileDir"
-				
+
 				continue
 				}
 
@@ -93,7 +96,7 @@ function export-FlexProfileOLD
 
 	begin { }
 
-	process 
+	process
 		{
 		foreach ($radio in $RadioObject)
 			{
@@ -121,7 +124,7 @@ function export-FlexProfileOLD
 			if (-not (test-path $moduleDir))
 				{
 				write-verbose "Path not found. Creating: $moduleDir"
-				
+
 				[void](mkdir $moduleDir)
 				}
 
@@ -130,7 +133,7 @@ function export-FlexProfileOLD
 			if (-not (test-path $ProfileDir))
 				{
 				write-verbose "Path not found. Creating: $ProfileDir"
-				
+
 				[void](mkdir $ProfileDir)
 				}
 
@@ -148,12 +151,12 @@ function export-FlexProfileOLD
 			$radioFile = $ProfileDir + "\$name.radio"
 			$global:flexradios[$indexObj.index] | export-clixml -depth 4 -path $radioFile
 
-			
+
 			#write-verbose "Exporting slice/panadapter configuration ..."
 
 			#$sliceFile = $ProfileDir + "\$name.slice"
 			#$global:slicereceivers | export-clixml -depth 4 -path $sliceFile
-			
+
 			}
 		}
 
@@ -182,3 +185,4 @@ export-modulemember -function get-FlexLatestFolderPath
 export-modulemember -function get-FlexControlLog
 export-modulemember -function get-FlexCommand
 export-modulemember -function start-FlexScreenSaver
+export-modulemember -function Get-FlexLibPath
