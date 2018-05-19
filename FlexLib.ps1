@@ -21,7 +21,7 @@ function Get-FlexLatestFolderPath
 
     if (test-path $flexRoot)
         {
-        $dirs = gci $flexRoot
+        $dirs = Get-ChildItem $flexRoot
 
         if (-not $dirs)
             {
@@ -57,7 +57,7 @@ function Get-FlexLatestFolderPath
         if ($modifiedDirs)
             {
             $latest = $null
-            $latest = ($modifiedDirs | sort Version -desc)[0]
+            $latest = ($modifiedDirs | Sort-Object Version -desc)[0]
 
             if ($latest.beta)
               {

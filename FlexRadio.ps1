@@ -19,7 +19,6 @@ function Get-FlexRadio {
 	process {
 		$count = 0
 		$found = $false
-		$AllRadios = @()
 
 		while (($count -le 10) -and !$found) {
 			# try to discover FlexRadios on the network
@@ -39,7 +38,7 @@ function Get-FlexRadio {
 		}
 
 		if ($Serial) {
-			$global:FlexRadios | ? { $_.serial -eq $Serial }
+			$global:FlexRadios | Where-Object { $_.serial -eq $Serial }
 		}
 		elseif ($global:FlexRadios) {
 			# using for loop to prevent modified collection exception when using pipeline
@@ -81,7 +80,7 @@ function Connect-FlexRadio {
 		}
 
 		foreach ($radio in $Serial) {
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
+			$radioObj = $global:FlexRadios | Where-Object { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -140,7 +139,7 @@ function disconnect-FlexRadio {
 		}
 
 		foreach ($radio in $Serial) {
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
+			$radioObj = $global:FlexRadios | Where-Object { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -199,7 +198,7 @@ function Restart-FlexRadio {
 		}
 
 		foreach ($radio in $Serial) {
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
+			$radioObj = $global:FlexRadios | Where-Object { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 
@@ -220,7 +219,6 @@ function Restart-FlexRadio {
 
 function get-FlexVersion {
 	[CmdletBinding(DefaultParameterSetName = "p0",
-		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]
 	param(
 		[Parameter(ParameterSetName = "p0", Position = 0, ValueFromPipelineByPropertyName = $true)]
@@ -512,7 +510,7 @@ function set-FlexRadio {
 		}
 
 		foreach ($radio in $Serial) {
-			$radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
+			$radioObj = $global:FlexRadios | Where-Object { $_.serial -eq $Serial }
 
 			write-verbose "Serial: $($radioObj.serial)"
 

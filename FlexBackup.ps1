@@ -61,7 +61,7 @@ function export-FlexDatabase
             }
         }
 
-    process 
+    process
         {
         if (-not $serial)
             {
@@ -78,7 +78,7 @@ function export-FlexDatabase
 
         foreach ($radio in $serial)
             {
-            $radioObj = $global:FlexRadios | ? { $_.serial -eq $serial }
+            $radioObj = $global:FlexRadios | Where-Object { $_.serial -eq $serial }
 
             write-verbose "Serial: $($radioObj.serial)"
 
@@ -86,7 +86,7 @@ function export-FlexDatabase
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -126,7 +126,7 @@ function export-FlexDatabase
                 {
                 $globalProfilesToUse = $null
 
-                $globalProfilesToUse = $flexProfiles | ? { $_.ProfileType -eq "Global" }
+                $globalProfilesToUse = $flexProfiles | Where-Object { $_.ProfileType -eq "Global" }
 
                 $metaString = "GLOBAL_PROFILES^"
 
@@ -143,10 +143,10 @@ function export-FlexDatabase
                 $metaArr += $metaString
                 }
             if (($pscmdlet.parametersetname -eq "p1") -or $TXProfiles)
-                {   
+                {
                 $txProfilesToUse = $null
 
-                $txProfilesToUse = $flexProfiles | ? { ($_.ProfileType -eq "TX") -and ($_.Name -notmatch "^RadioSport|^Default|\*") }
+                $txProfilesToUse = $flexProfiles | Where-Object { ($_.ProfileType -eq "TX") -and ($_.Name -notmatch "^RadioSport|^Default|\*") }
 
                 $metaString = "TX_PROFILES^"
 
@@ -166,7 +166,7 @@ function export-FlexDatabase
                 {
                 $exportMemories = $true
 
-                $memoryOwners = get-FlexMemory -Serial $radioObj.Serial | group Owner,Group | % { $_.Name }
+                $memoryOwners = get-FlexMemory -Serial $radioObj.Serial | Group-Object Owner,Group | ForEach-Object { $_.Name }
 
                 $metaString = "MEMORIES^"
 
@@ -225,9 +225,9 @@ function export-FlexDatabase
                     start-sleep 1
                     }
 
-                rm $metaFullPath
+                Remove-Item $metaFullPath
 
-                $radioObj | select Model,Serial,DatabaseExportComplete,DatabaseExportException
+                $radioObj | Select-Object Model,Serial,DatabaseExportComplete,DatabaseExportException
                 }
             }
         }

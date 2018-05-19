@@ -76,10 +76,9 @@ function ResolveIP ($ip)
 		}
 	}
 
-function get-packet
+function Get-Packet
 	{
 	[CmdletBinding(DefaultParameterSetName="p0",
-		SupportsShouldProcess=$true,
 		ConfirmImpact="Low")]
 	param(
 		[Parameter(ParameterSetName="p0",Position=0)]
@@ -127,8 +126,8 @@ function get-packet
 	# try to figure out which IP address to bind to by looking at the default route
 	<#
 	if ($LocalIP -eq "NotSpecified") {
-		route print 0* | % { 
-			if ($_ -match "\s{2,}0\.0\.0\.0") { 
+		route print 0* | % {
+			if ($_ -match "\s{2,}0\.0\.0\.0") {
 				$null,$null,$null,$LocalIP,$null = [regex]::replace($_.trimstart(" "),"\s{2,}",",").split(",")
 				}
 			}
@@ -144,11 +143,11 @@ function get-packet
 		{
 		throw "Launch Powershell with elevated (administrator) rights and try again."
 		}
-	
+
 	if (-not $localIP)
 		{
 		# this is probably a better way
-		$AddressList = ([system.net.dns]::gethostentry([system.net.dns]::gethostname())).addresslist | ? { $_.AddressFamily -eq "InterNetwork" -and $_.IPAddressToString -notmatch "^169" }
+		$AddressList = ([system.net.dns]::gethostentry([system.net.dns]::gethostname())).addresslist | Where-Object { $_.AddressFamily -eq "InterNetwork" -and $_.IPAddressToString -notmatch "^169" }
 
 		if ($AddressList -is [array])
 			{
@@ -212,7 +211,7 @@ function get-packet
 				break
 				}
 			}
-		
+
 		if ($Seconds -ne 0 -and ($([DateTime]::Now) -gt $starttime.addseconds($Seconds)))  # if user-specified timeout has expired
 			{
 			break
@@ -220,12 +219,12 @@ function get-packet
 
 		if ($smartSDRdetected -eq $false -and $protocol -eq "flex")
 			{
-			$SmartSDRVersion = (get-process | ? { $_.processname -eq "SmartSDR" }).productversion
+			$SmartSDRVersion = (get-process | Where-Object { $_.processname -eq "SmartSDR" }).productversion
 
 			if ($SmartSDRVersion)
 				{
 				write-verbose "SmartSDRVersion: $SmartSDRVersion"
-				
+
 				displayTime
 				displaySource "*"
 				write-host "SmartSDR detected, version $SmartSDRVersion." -foregroundcolor cyan
@@ -235,7 +234,7 @@ function get-packet
 
 		if ($DAXdetected -eq $false -and $protocol -eq "flex")
 			{
-			$DAXversion = (get-process | ? { $_.processname -eq "DAX" }).productversion
+			$DAXversion = (get-process | Where-Object { $_.processname -eq "DAX" }).productversion
 
 			if ($DAXversion)
 				{
@@ -250,7 +249,7 @@ function get-packet
 
 		if ($CATdetected -eq $false -and $protocol -eq "flex")
 			{
-			$CATversion = (get-process | ? { $_.processname -eq "Cat" }).productversion
+			$CATversion = (get-process | Where-Object { $_.processname -eq "Cat" }).productversion
 
 			if ($CATversion)
 				{
@@ -269,7 +268,7 @@ function get-packet
 
 			continue
 			}
-		
+
 		++$packetCount
 
 		if ($packetCount % 1000 -eq 0)
@@ -368,12 +367,12 @@ function get-packet
 			{
 			[void]$BinaryReader.ReadBytes($HeaderLength - 20)  # should probably do something with this later
 			}
-		
+
 		$Data = ""
 		$TCPFlagsString = @()  # make this an array
 		$TCPWindow = ""
 		$SequenceNumber = ""
-		
+
 		switch ($ProtocolNumber)  # see http://www.iana.org/assignments/protocol-numbers
 			{
 			1 {  # ICMP
@@ -394,13 +393,13 @@ function get-packet
 				}
 			6 {  # TCP
 				$protocolDesc = "TCP"
-				
+
 				$sourcePort = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
 				$destPort = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
 				$SequenceNumber = NetworkToHostUInt32 $BinaryReader.ReadBytes(4)
 				$AckNumber = NetworkToHostUInt32 $BinaryReader.ReadBytes(4)
 				$TCPHeaderLength = [int]"0x$(('{0:X}' -f $BinaryReader.ReadByte())[0])" * 4  # reads Data Offset + 4 bits of Reserve (ignored)
-				
+
 				$TCPFlags = $BinaryReader.ReadByte()  # this will also contain 2 bits of Reserve on the left, but we can just ignore them.
 
 				switch ($TCPFlags)
@@ -412,7 +411,7 @@ function get-packet
 					{ $_ -band $TCPACK } { $TCPFlagsString += "ACK" }
 					{ $_ -band $TCPURG } { $TCPFlagsString += "URG" }
 					}
-				
+
 				$TCPWindow = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
 				$TCPChecksum = [System.Net.IPAddress]::NetworkToHostOrder($BinaryReader.ReadInt16())
 				$TCPUrgentPointer = NetworkToHostUInt16 $BinaryReader.ReadBytes(2)
@@ -457,7 +456,7 @@ function get-packet
 				break
 				}
 			}
-		
+
 		$BinaryReader.Close()
 		$memorystream.Close()
 
@@ -527,39 +526,39 @@ function get-packet
 
 		# Calculating protocol distribution
 		write-progress $activity "Calculating protocol distribution"
-		$protocols = $packets | sort protocol | group protocol | sort count -descending | select Count,@{name="Protocol";Expression={$_.name}} 
+		$protocols = $packets | Sort-Object protocol | Group-Object protocol | Sort-Object count -descending | Select-Object Count,@{name="Protocol";Expression={$_.name}}
 
 		# Calculating source port distribution
 		write-progress $activity "Calculating source port distribution"
-		$sourceport = $packets | sort sourceport | group sourceport | sort count -descending | select Count,@{name="Port";Expression={$_.name}}
+		$sourceport = $packets | Sort-Object sourceport | Group-Object sourceport | Sort-Object count -descending | Select-Object Count,@{name="Port";Expression={$_.name}}
 
 		# Calculating destination distribution
 		write-progress $activity "Calculating destination distribution"
-		$destinationlist = $packets | sort Destination | select Destination
+		$destinationlist = $packets | Sort-Object Destination | Select-Object Destination
 
 		# Calculating destination port distribution
 		write-progress $activity "Calculating destination port distribution"
-		$destinationport = $packets | sort destport | group destport | sort count -descending | select Count,@{name="Port";Expression={$_.name}}
+		$destinationport = $packets | Sort-Object destport | Group-Object destport | Sort-Object count -descending | Select-Object Count,@{name="Port";Expression={$_.name}}
 
 		# Building source list
 		write-progress $activity "Building source list"
-		$sourcelist = $packets | sort source | select Source
+		$sourcelist = $packets | Sort-Object source | Select-Object Source
 
 		# Building source IP list
 		write-progress $activity "Building source IP list"
-		$ips = $sourcelist | group source | sort count -descending | select Count,@{Name="IP";Expression={$_.Name}}
-			
+		$ips = $sourcelist | Group-Object source | Sort-Object count -descending | Select-Object Count,@{Name="IP";Expression={$_.Name}}
+
 		# Build destination IP list
 		write-progress $activity "Building destination IP list"
-		$ipd = $destinationlist | group destination | sort count -descending | select Count,@{Name="IP";Expression={$_.Name}}
+		$ipd = $destinationlist | Group-Object destination | Sort-Object count -descending | Select-Object Count,@{Name="IP";Expression={$_.Name}}
 
 		# Presenting data
 		write-progress $activity "Compiling results"
-		$protocols = $protocols | Select Count,Protocol,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}} 
+		$protocols = $protocols | Select-Object Count,Protocol,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}}
 
-		$destinationport = $destinationport | select Count,Port,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}} 
+		$destinationport = $destinationport | Select-Object Count,Port,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}}
 
-		$sourceport = $sourceport | Select Count,Port,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}} 
+		$sourceport = $sourceport | Select-Object Count,Port,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}}
 
 		if ($ResolveHosts)
 			{
@@ -577,8 +576,8 @@ function get-packet
 			}
 
 		write-progress $activity "Compiling results"
-		$destinations = $ipd | Select Count,IP,Host,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}} 
-		$sources = $ips | Select Count,IP,Host,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}} 
+		$destinations = $ipd | Select-Object Count,IP,Host,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}}
+		$sources = $ips | Select-Object Count,IP,Host,@{Name="Percentage";Expression={"{0:P4}" -f ($_.count/$packets.count)}}
 
 		$global:stats = new-object psobject
 
@@ -589,7 +588,7 @@ function get-packet
 		$stats | add-member noteproperty "Destinations" $destinations
 		$stats | add-member noteproperty "DestinationPorts" $destinationport
 		$stats | add-member noteproperty "Sources" $sources
-		$stats | add-member noteproperty "SourcePorts" $sourceport 
+		$stats | add-member noteproperty "SourcePorts" $sourceport
 
 		write-host
 		write-host " TotalPackets: " $stats.totalpackets
@@ -597,6 +596,6 @@ function get-packet
 		write-host "PacketsPerSec: " $stats.packetspersec
 		write-host
 		write-host "More statistics can be accessed from the global `$stats variable." -fore cyan
-		
+
 		}
 	}

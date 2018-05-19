@@ -1,6 +1,6 @@
 # FlexUtil.ps1
 
-function get-FlexControlLog
+function Get-FlexControlLog
     {
     [CmdletBinding(DefaultParameterSetName="p0")]
 
@@ -50,9 +50,9 @@ function get-FlexControlLog
         }
     }
 
-function get-FlexCommand
+function Get-FlexCommand
     {
-    Get-Command | ? { $_.name -like "*-Flex*" }
+    Get-Command | Where-Object { $_.name -like "*-Flex*" }
     }
 
 function start-FlexScreenSaver
@@ -138,7 +138,7 @@ function start-FlexScreenSaver
                         }
                     }
 
-                $activeSlice = get-FlexSliceReceiver | ? { $_.Active -eq $true }
+                $activeSlice = get-FlexSliceReceiver | Where-Object { $_.Active -eq $true }
 
                 if ($activeSlice)
                     {

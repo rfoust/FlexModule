@@ -1,9 +1,9 @@
 # FlexSlice.ps1
 
-function get-FlexSliceReceiver
+function Get-FlexSliceReceiver
     {
     [CmdletBinding(DefaultParameterSetName="p0")]
-    
+
     param(
         [Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
         [Parameter(ParameterSetName="p1",Position=0, ValueFromPipelineByPropertyName = $true)]
@@ -22,7 +22,7 @@ function get-FlexSliceReceiver
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -49,7 +49,7 @@ function get-FlexSliceReceiver
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -66,20 +66,20 @@ function get-FlexSliceReceiver
 
             if ($PSBoundParameters.ContainsKey('Index') -and ($Index -ge 0))
                 {
-                $slices = $radioObj.SliceList | ? { $_.index -eq $Index}
+                $slices = $radioObj.SliceList | Where-Object { $_.index -eq $Index}
                 }
             else
                 {
-                $slices = $radioObj.SliceList | sort index
+                $slices = $radioObj.SliceList | Sort-Object index
                 }
 
             if ($PSBoundParameters.ContainsKey('Active'))
                 {
-                $slices = $slices | ? { $_.Active -eq $true }
+                $slices = $slices | Where-Object { $_.Active -eq $true }
                 }
             elseif ($PSBoundParameters.ContainsKey('Inactive'))
                 {
-                $slices = $slices | ? { $_.Active -eq $false }
+                $slices = $slices | Where-Object { $_.Active -eq $false }
                 }
 
             $slices
@@ -108,7 +108,7 @@ function new-FlexSliceReceiver
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -135,7 +135,7 @@ function new-FlexSliceReceiver
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -155,7 +155,7 @@ function new-FlexSliceReceiver
                         {
                         throw "All slice receivers are already active!"
                         }
-                        
+
                     if ($pscmdlet.ShouldProcess($radioObj.Serial,"Create Slice on Pan #$($panadapter.StreamID)"))
                         {
                         $newSlice = $radioObj.CreateSlice($panadapter,$mode)
@@ -192,7 +192,7 @@ function remove-FlexSliceReceiver
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -219,7 +219,7 @@ function remove-FlexSliceReceiver
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -413,7 +413,7 @@ function set-FlexSliceReceiver
             }
         else
             {
-            $radioObject = $global:FlexRadios | ? { $_.serial -eq $Serial }
+            $radioObject = $global:FlexRadios | Where-Object { $_.serial -eq $Serial }
             }
 
         foreach ($radio in $Serial)
@@ -426,7 +426,7 @@ function set-FlexSliceReceiver
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)

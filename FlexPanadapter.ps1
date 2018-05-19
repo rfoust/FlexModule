@@ -1,6 +1,6 @@
 # FlexPanadapter.ps1
 
-function get-FlexPanadapter
+function Get-FlexPanadapter
     {
     [CmdletBinding(DefaultParameterSetName="p0")]
     param(
@@ -13,7 +13,7 @@ function get-FlexPanadapter
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -40,7 +40,7 @@ function get-FlexPanadapter
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -57,11 +57,11 @@ function get-FlexPanadapter
 
             if ($PSBoundParameters.ContainsKey('StreamID'))
                 {
-                $panadapters = $radioObj.PanadapterList | ? { $_.StreamID -eq $StreamID}
+                $panadapters = $radioObj.PanadapterList | Where-Object { $_.StreamID -eq $StreamID}
                 }
             else
                 {
-                $panadapters = $radioObj.PanadapterList | sort StreamID
+                $panadapters = $radioObj.PanadapterList | Sort-Object StreamID
                 }
 
             $panadapters
@@ -82,7 +82,7 @@ function new-FlexPanadapter
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -109,7 +109,7 @@ function new-FlexPanadapter
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -128,7 +128,7 @@ function new-FlexPanadapter
 #>
 
 
-function remove-FlexPanadapter
+function Remove-FlexPanadapter
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
@@ -143,7 +143,7 @@ function remove-FlexPanadapter
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -170,7 +170,7 @@ function remove-FlexPanadapter
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -196,7 +196,7 @@ function remove-FlexPanadapter
     end { }
     }
 
-function set-FlexPanadapter
+function Set-FlexPanadapter
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,

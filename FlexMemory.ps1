@@ -1,9 +1,8 @@
 # FlexMemory.ps1
 
-function get-FlexMemory
+function Get-FlexMemory
     {
     [CmdletBinding(DefaultParameterSetName="p0",
-        SupportsShouldProcess=$true,
         ConfirmImpact="Low")]
     param(
         [Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
@@ -15,7 +14,7 @@ function get-FlexMemory
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -42,7 +41,7 @@ function get-FlexMemory
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -57,11 +56,11 @@ function get-FlexMemory
 
             if ($PSBoundParameters.ContainsKey('Index') -and ($Index -ge 0))
                 {
-                $radioObj.MemoryList | ? { $_.index -eq $Index}
+                $radioObj.MemoryList | Where-Object { $_.index -eq $Index}
                 }
             else
                 {
-                $radioObj.MemoryList | sort index
+                $radioObj.MemoryList | Sort-Object index
                 }
             }
         }
@@ -132,7 +131,7 @@ function set-FlexMemory
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -159,7 +158,7 @@ function set-FlexMemory
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -325,7 +324,7 @@ function remove-FlexMemory
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -352,7 +351,7 @@ function remove-FlexMemory
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -393,7 +392,7 @@ function select-FlexMemory
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -420,7 +419,7 @@ function select-FlexMemory
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -458,7 +457,7 @@ function new-FlexMemory
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -485,7 +484,7 @@ function new-FlexMemory
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)

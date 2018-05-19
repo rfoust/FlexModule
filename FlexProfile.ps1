@@ -1,9 +1,8 @@
 # FlexProfile.ps1
 
-function get-FlexProfile
+function Get-FlexProfile
     {
     [CmdletBinding(DefaultParameterSetName="p0",
-        SupportsShouldProcess=$true,
         ConfirmImpact="Low")]
     param(
         [Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
@@ -12,7 +11,7 @@ function get-FlexProfile
 
     begin { }
 
-    process 
+    process
         {
         if (-not $Serial)
             {
@@ -29,7 +28,7 @@ function get-FlexProfile
 
         foreach ($radio in $Serial)
             {
-            $radioObj = $global:FlexRadios | ? { $_.serial -eq $Serial }
+            $radioObj = $global:FlexRadios | Where-Object { $_.serial -eq $Serial }
 
             write-verbose "Serial: $($radioObj.serial)"
 
@@ -37,7 +36,7 @@ function get-FlexProfile
                 {
                 continue
                 }
-            
+
             write-verbose "Radio connected: $($radioObj.connected)"
 
             if ($radioObj.Connected -eq $false)
@@ -156,7 +155,7 @@ function get-FlexProfile
                 $profileObj.PSObject.TypeNames.Insert(0,'FlexModule.Profile')
                 $profileObj
                 }
-            
+
             }
         }
 

@@ -53,7 +53,7 @@ function displaySource ([string]$source, [int]$pad = 15)
             break
             }
         }
-    
+
     write-host $source -foregroundcolor $foreColor -nonewline
     write-host " : " -foregroundcolor  white -nonewline
     }
@@ -62,7 +62,7 @@ function displayData ([string]$data)
     {
     $consoleWidth = $host.ui.rawui.windowsize.width
     $leftPad = 28   # 10 for date/time, 15 for source + padding + extra stuff
-    #$dataLength = $data.length 
+    #$dataLength = $data.length
     $maxDataWidth = $consoleWidth - $leftPad - 2    # the 3 is for the " : " in the prefix string, and subtract one for a right pad
 
     $firstLine = $true
@@ -156,7 +156,7 @@ function get-FlexPacket
             {
             continue
             }
-            
+
         write-verbose "Radio connected: $($radioObj.connected)"
 
         displayTime
@@ -194,7 +194,7 @@ function get-FlexPacket
         $pingCount = 0
 
         #get-packet | ? { ($_.source -eq "192.168.1.133" -or $_.destination -eq "192.168.1.133") -and ($_.protocol -eq "TCP")} | % {
-        get-packet -protocol flex -LocalIP:$LocalIP -remoteIP $remoteIP | % {
+        get-packet -protocol flex -LocalIP:$LocalIP -remoteIP $remoteIP | ForEach-Object {
             $packet = $_
 
             if ((-not $packet) -or ($packet.length -le 0))
@@ -240,7 +240,7 @@ function get-FlexPacket
                     }
                 }
 
-            $packet -split '\n' | % { $_ -replace '^\x00*','' } | ? { $_ -ne "" -and $_ -ne $null } | % {
+            $packet -split '\n' | ForEach-Object { $_ -replace '^\x00*','' } | Where-Object { $_ -ne "" -and $_ -ne $null } | ForEach-Object {
 
                 $packetdata = $_
 
@@ -312,7 +312,7 @@ function get-FlexPacket
 
                         displayTime
                         displaySource "RadioResponse"
-                        
+
                         displayData "{$sequence} $command"
                         break
                         }
