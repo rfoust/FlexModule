@@ -2,7 +2,7 @@
 
 This is a Powershell module for FlexRadio 6000 series amateur radios. Note that this project is NOT maintained by FlexRadio Systems.
 
-More information about FlexRadio can be found at their website: [http://www.flexradio.com]
+More information about FlexRadio can be found on their website: [http://www.flexradio.com]
 
 ## Installation
 
@@ -25,6 +25,45 @@ Model           Serial                    IP                   Connected  Callsi
 -----           ------                    --                   ---------  --------
 FLEX-6700       4213-3107-6700-8545       192.168.1.155        True       KI4TTZ
 
+PS C:\>
+```
+
+## Examples
+
+*Changing the RF Power:*
+
+```Powershell
+PS C:\> Get-FlexRadio | select *power*
+
+MaxPowerLevel RFPower TunePower TXRFPowerChangesAllowed
+------------- ------- --------- -----------------------
+          100      15        10                    True
+
+PS C:\> Get-FlexRadio | Set-FlexRadio -RFPower 100
+PS C:\> Get-FlexRadio | select *power*
+
+MaxPowerLevel RFPower TunePower TXRFPowerChangesAllowed
+------------- ------- --------- -----------------------
+          100     100        10                    True
+
+PS C:\>
+```
+
+*Changing the frequency of the active slice receiver:*
+
+```Powershell
+PS C:\> Get-FlexSliceReceiver -Active
+
+Index           Active                    RXAnt                TXAnt      Freq
+-----           ------                    -----                -----      ----
+0               True                      RX_A                 ANT1       7.1301
+
+PS C:\> Get-FlexSliceReceiver -Active | Set-FlexSliceReceiver -Freq "7.127"
+
+Confirm
+Are you sure you want to perform this action?
+Performing the operation "Modify Freq on Slice #0" on target "4213-3107-6700-8545".
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "Y"): y
 PS C:\>
 ```
 
