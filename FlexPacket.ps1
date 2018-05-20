@@ -112,20 +112,16 @@ function displayData ([string]$data)
     }
 
 # this is a packet sniffer function for flex radio packets
-function get-FlexPacket
+function Get-FlexPacket
     {
     [CmdletBinding(DefaultParameterSetName="p0",
-        SupportsShouldProcess=$true,
         ConfirmImpact="Low")]
     param(
         [Parameter(ParameterSetName="p0",Position=0, ValueFromPipelineByPropertyName = $true)]
         [string]$Serial,
 
         [Parameter(ParameterSetName="p0",Position=1)]
-        [string]$LocalIP,
-
-        [Parameter(ParameterSetName="p0")]
-        [switch]$HidePing
+        [string]$LocalIP
         )
 
     begin { }
@@ -271,7 +267,7 @@ function get-FlexPacket
                         {
                         $sequence,$command = $packetSubData.split("|")
 
-                        if ($command -eq "ping")
+                        if ($command -match "^ping")
                             {
                             $pingHash[$sequence] = get-date
                             $pingCount++
@@ -287,7 +283,7 @@ function get-FlexPacket
 
                                 if ($pingHash.count)
                                     {
-                                    displayData "$($pingHash.count) ping(s) haven't been acknowledged."
+                                    displayData "$($pingHash.count) unacknowledged ping(s)."
                                     }
                                 }
 

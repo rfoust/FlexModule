@@ -126,7 +126,7 @@ function Get-FlexLibPath
     end { }
     }
 
-function import-flexlib
+function Import-FlexLib
     {
     $flexLibPath = get-flexlibpath
 

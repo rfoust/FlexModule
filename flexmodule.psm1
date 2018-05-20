@@ -4,6 +4,7 @@
 . $PSScriptRoot\FlexPacket.ps1
 . $PSScriptRoot\FlexLib.ps1
 . $PSScriptRoot\FlexBackup.ps1
+. $PSScriptRoot\FlexLog.ps1
 . $PSScriptRoot\FlexMemory.ps1
 . $PSScriptRoot\FlexProfile.ps1
 . $PSScriptRoot\FlexSlice.ps1
@@ -166,15 +167,7 @@ function export-FlexProfileOLD
 
 
 # main functions
-export-modulemember -function *-FlexRadio
-export-modulemember -function *-FlexSliceReceiver
-export-modulemember -function *-FlexPanadapter
-export-modulemember -function *-FlexProfile
-export-modulemember -function *-FlexMemory
-export-modulemember -function *-FlexDatabase
-export-modulemember -function *-FlexTNF
-export-modulemember -function *-FlexGPS
-export-modulemember -function *-FlexVersion
+export-modulemember -function *-Flex*
 
 # packet sniffer functions
 export-modulemember -function get-FlexPacket

@@ -68,7 +68,7 @@ function Get-FlexMemory
     end { }
     }
 
-function set-FlexMemory
+function Set-FlexMemory
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
@@ -309,7 +309,7 @@ function set-FlexMemory
     end { }
     }
 
-function remove-FlexMemory
+function Remove-FlexMemory
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
@@ -377,7 +377,7 @@ function remove-FlexMemory
     end { }
     }
 
-function select-FlexMemory
+function Select-FlexMemory
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
@@ -445,7 +445,7 @@ function select-FlexMemory
     end { }
     }
 
-function new-FlexMemory
+function New-FlexMemory
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,

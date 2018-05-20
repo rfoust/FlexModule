@@ -1,61 +1,11 @@
 # FlexUtil.ps1
 
-function Get-FlexControlLog
-    {
-    [CmdletBinding(DefaultParameterSetName="p0")]
-
-    param(
-        # sets screensaver to active slice receiver frequency
-        [Parameter(ParameterSetName="p0")]
-        [string]$FCLog = (join-path $env:AppData "FlexRadio Systems\LogFiles\SSDR_FCManager.log")
-      )
-
-    $lastDate = $null
-
-    foreach ($line in (get-content $FCLog))
-        {
-        write-verbose "Raw line: $line"
-        write-verbose "Line Length: $($line.length)"
-
-        if ($line -and ($line.length -gt 0) -and ($line -match "^\S"))  # start with non-whitespace?
-            {
-            $line = $line -replace "M: ","M|"
-
-            write-verbose "Initial split: $line"
-
-            [datetime]$logEntryDate,[string]$logData = $line -split "\|"
-
-            write-verbose "Date: $logEntryDate"
-            write-verbose "LogData: $logData"
-
-            # used if the prior line wrapped; wrapped lines won't have a date
-            $lastDate = $logEntryDate
-
-            $logEntry = new-object psobject
-
-            $logEntry | add-member NoteProperty "Timestamp" $logEntryDate
-            $logEntry | add-member NoteProperty "Data" $logData
-
-            $logEntry
-            }
-        elseif ($lastDate -and ($line.length -gt 0))
-            {
-            $logEntry = new-object psobject
-
-            $logEntry | add-member NoteProperty "Timestamp" $lastDate
-            $logEntry | add-member NoteProperty "Data" $line.trimstart()
-
-            $logEntry
-            }
-        }
-    }
-
 function Get-FlexCommand
     {
     Get-Command | Where-Object { $_.name -like "*-Flex*" }
     }
 
-function start-FlexScreenSaver
+function Start-FlexScreenSaver
     {
     [CmdletBinding(DefaultParameterSetName="p0")]
 

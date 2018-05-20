@@ -1,6 +1,6 @@
 # FlexBackup.ps1
 
-function export-FlexDatabase
+function Export-FlexDatabase
     {
     [CmdletBinding(DefaultParameterSetName="p1",
         SupportsShouldProcess=$true,

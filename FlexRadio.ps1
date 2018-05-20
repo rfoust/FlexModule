@@ -116,7 +116,7 @@ function Connect-FlexRadio {
 	end { }
 }
 
-function disconnect-FlexRadio {
+function Disconnect-FlexRadio {
 	[CmdletBinding(DefaultParameterSetName = "p0",
 		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]
@@ -217,7 +217,7 @@ function Restart-FlexRadio {
 	end { }
 }
 
-function get-FlexVersion {
+function Get-FlexVersion {
 	[CmdletBinding(DefaultParameterSetName = "p0",
 		ConfirmImpact = "Low")]
 	param(
@@ -301,7 +301,7 @@ function get-FlexVersion {
 }
 
 
-function set-FlexRadio {
+function Set-FlexRadio {
 	[CmdletBinding(DefaultParameterSetName = "p0",
 		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]
@@ -941,7 +941,7 @@ function set-FlexRadio {
 	end { }
 }
 
-function enable-FlexTNF {
+function Enable-FlexTNF {
 	[CmdletBinding(DefaultParameterSetName = "p0",
 		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]
@@ -991,7 +991,7 @@ function enable-FlexTNF {
 	end { }
 }
 
-function disable-FlexTNF {
+function Disable-FlexTNF {
 	[CmdletBinding(DefaultParameterSetName = "p0",
 		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]
@@ -1041,7 +1041,7 @@ function disable-FlexTNF {
 	end { }
 }
 
-function install-FlexGPS {
+function Install-FlexGPS {
 	[CmdletBinding(DefaultParameterSetName = "p0",
 		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]
@@ -1089,7 +1089,7 @@ function install-FlexGPS {
 	end { }
 }
 
-function uninstall-FlexGPS {
+function Uninstall-FlexGPS {
 	[CmdletBinding(DefaultParameterSetName = "p0",
 		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]

@@ -89,7 +89,7 @@ function Get-FlexSliceReceiver
     end { }
     }
 
-function new-FlexSliceReceiver
+function New-FlexSliceReceiver
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
@@ -177,7 +177,7 @@ function new-FlexSliceReceiver
     end { }
     }
 
-function remove-FlexSliceReceiver
+function Remove-FlexSliceReceiver
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
@@ -245,7 +245,7 @@ function remove-FlexSliceReceiver
     end { }
     }
 
-function set-FlexSliceReceiver
+function Set-FlexSliceReceiver
     {
     [CmdletBinding(DefaultParameterSetName="p0",
         SupportsShouldProcess=$true,
