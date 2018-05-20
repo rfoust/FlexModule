@@ -13,32 +13,39 @@ If you're running a recent version of Powershell, just run 'get-flexradio' and i
 
 To see all of the cmdlets available in this module, run "Get-FlexCommand". The commands currently available are:
 
-* connect-FlexRadio
-* disable-FlexTNF
-* disconnect-FlexRadio
-* enable-FlexTNF
-* export-FlexDatabase
-* get-FlexCommand
-* get-FlexControlLog
-* get-flexlatestfolderpath
-* get-flexlibpath
-* get-FlexMemory
-* get-flexpacket
-* get-FlexPanadapter
-* get-FlexProfile
-* get-FlexRadio
-* get-FlexSliceReceiver
-* import-flexlib
-* new-FlexMemory
-* new-FlexSliceReceiver
-* remove-FlexMemory
-* remove-FlexPanadapter
-* remove-FlexSliceReceiver
-* select-FlexMemory
-* set-FlexMemory
-* set-FlexPanadapter
-* set-FlexRadio
-* set-FlexSliceReceiver
+* Connect-FlexRadio
+* Disable-FlexLog
+* Disable-FlexTNF
+* Disconnect-FlexRadio
+* Enable-FlexLog
+* Enable-FlexTNF
+* Export-FlexDatabase
+* Get-FlexCommand
+* Get-FlexLatestFolderPath
+* Get-FlexLibPath
+* Get-FlexLog
+* Get-FlexMemory
+* Get-FlexPacket
+* Get-FlexPanadapter
+* Get-FlexProfile
+* Get-FlexRadio
+* Get-FlexSliceReceiver
+* Get-FlexVersion
+* Import-FlexLib
+* Install-FlexGPS
+* New-FlexMemory
+* New-FlexSliceReceiver
+* Remove-FlexMemory
+* Remove-FlexPanadapter
+* Remove-FlexSliceReceiver
+* Restart-FlexRadio
+* Select-FlexMemory
+* Set-FlexMemory
+* Set-FlexPanadapter
+* Set-FlexRadio
+* Set-FlexSliceReceiver
+* Start-FlexScreenSaver
+* Uninstall-FlexGPS
 
 If you have questions, feel free to ask (rfoust at gmail.com). If you are interested in a feature that I haven't implemented yet, let me know and I'll probably make it a priority. This is a "proof-of-concept" and "for-fun" project.
 
