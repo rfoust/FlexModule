@@ -147,7 +147,7 @@ function Get-Packet
 	if (-not $localIP)
 		{
 		# this is probably a better way
-		$AddressList = ([system.net.dns]::gethostentry([system.net.dns]::gethostname())).addresslist | Where-Object { $_.AddressFamily -eq "InterNetwork" -and $_.IPAddressToString -notmatch "^169" }
+		$AddressList = ([system.net.dns]::gethostentry([system.net.dns]::gethostname())).addresslist | Where-Object { $_.AddressFamily -eq "InterNetwork" -and $_.IPAddressToString -notmatch "^169|^172" }
 
 		if ($AddressList -is [array])
 			{
