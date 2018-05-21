@@ -8,6 +8,10 @@ More information about FlexRadio can be found on their website: [http://www.flex
 
 To install -- Clone this repo to an appropriate Modules folder in Powershell, for example, in your `Documents\WindowsPowerShell\Modules\FlexModule` folder.
 
+If this is your first time running scripts in Powershell, you may also need to launch a Powershell session as Administrator (Right click
+the Powershell icon, select "Run as administrator") and then type `Set-ExecutionPolicy RemoteSigned`. This will open up the security settings
+a little on your computer so that you can run scripts.
+
 ## Usage
 
 If you're running a recent version of Powershell, just run `Get-FlexRadio` and it should show your FlexRadio 6000 series radio.  Run `Connect-FlexRadio` to connect to it.
