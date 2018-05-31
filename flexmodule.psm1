@@ -10,6 +10,7 @@
 . $PSScriptRoot\FlexSlice.ps1
 . $PSScriptRoot\FlexPanadapter.ps1
 . $PSScriptRoot\FlexUtil.ps1
+. $PSScriptRoot\Smartlink.ps1
 
 # todo: send "exit reboot" to reboot radio.
 

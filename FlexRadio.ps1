@@ -39,12 +39,17 @@ function Get-FlexRadio {
 
 		if ($Serial) {
 			$global:FlexRadios | Where-Object { $_.serial -eq $Serial }
+			$global:WanFlexRadios | Where-Object { $_.serial -eq $Serial }
 		}
 		elseif ($global:FlexRadios) {
 			# using for loop to prevent modified collection exception when using pipeline
 			for ($i = 0; $i -lt $global:FlexRadios.count; $i++) {
 				$global:FlexRadios[$i]
 			}
+		}
+
+		if ($global:WanFlexRadios) {
+		$global:WanFlexRadios
 		}
 	}
 

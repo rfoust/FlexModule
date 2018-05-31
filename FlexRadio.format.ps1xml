@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?> 
+<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
     <SelectionSets>
         <SelectionSet>
@@ -23,7 +23,7 @@
         </SelectionSet>
     </SelectionSets>
 
-    
+
     <!-- ################ VIEW DEFINITIONS ################ -->
 
     <ViewDefinitions>
@@ -33,8 +33,8 @@
                 <SelectionSetName>RadioView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Model</PropertyName> 
-                <CustomControlName>RadioView-GroupingFormat</CustomControlName>  
+                <PropertyName>Model</PropertyName>
+                <CustomControlName>RadioView-GroupingFormat</CustomControlName>
             </GroupBy>
             <TableControl>
                 <TableHeaders>
@@ -63,6 +63,11 @@
                         <Width>10</Width>
                         <Alignment>left</Alignment>
                     </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>IsWan</Label>
+                        <Width>10</Width>
+                        <Alignment>left</Alignment>
+                    </TableColumnHeader>
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
@@ -83,6 +88,9 @@
                             <TableColumnItem>
                                 <PropertyName>Callsign</PropertyName>
                             </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>IsWan</PropertyName>
+                            </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
                 </TableRowEntries>
@@ -94,8 +102,8 @@
                 <SelectionSetName>RadioView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Model</PropertyName> 
-                <CustomControlName>RadioView-GroupingFormat</CustomControlName>  
+                <PropertyName>Model</PropertyName>
+                <CustomControlName>RadioView-GroupingFormat</CustomControlName>
             </GroupBy>
             <ListControl>
                 <ListEntries>
@@ -119,6 +127,9 @@
                             <ListItem>
                                 <PropertyName>Callsign</PropertyName>
                             </ListItem>
+                            <ListItem>
+                                <PropertyName>IsWan</PropertyName>
+                            </ListItem>
                         </ListItems>
                     </ListEntry>
                     <ListEntry>
@@ -138,6 +149,9 @@
                             <ListItem>
                                 <PropertyName>Callsign</PropertyName>
                             </ListItem>
+                            <ListItem>
+                                <PropertyName>IsWan</PropertyName>
+                            </ListItem>
                         </ListItems>
                     </ListEntry>
                 </ListEntries>
@@ -149,8 +163,8 @@
                 <SelectionSetName>RadioView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Model</PropertyName> 
-                <CustomControlName>RadioView-GroupingFormat</CustomControlName>  
+                <PropertyName>Model</PropertyName>
+                <CustomControlName>RadioView-GroupingFormat</CustomControlName>
             </GroupBy>
             <WideControl>
                 <WideEntries>
@@ -179,8 +193,8 @@
                 <SelectionSetName>SliceView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Owner</PropertyName> 
-                <CustomControlName>SliceView-GroupingFormat</CustomControlName>  
+                <PropertyName>Owner</PropertyName>
+                <CustomControlName>SliceView-GroupingFormat</CustomControlName>
             </GroupBy>
             <TableControl>
                 <TableHeaders>
@@ -240,8 +254,8 @@
                 <SelectionSetName>SliceView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Owner</PropertyName> 
-                <CustomControlName>SliceView-GroupingFormat</CustomControlName>  
+                <PropertyName>Owner</PropertyName>
+                <CustomControlName>SliceView-GroupingFormat</CustomControlName>
             </GroupBy>
             <ListControl>
                 <ListEntries>
@@ -295,8 +309,8 @@
                 <SelectionSetName>SliceView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Owner</PropertyName> 
-                <CustomControlName>SliceView-GroupingFormat</CustomControlName>  
+                <PropertyName>Owner</PropertyName>
+                <CustomControlName>SliceView-GroupingFormat</CustomControlName>
             </GroupBy>
             <WideControl>
                 <WideEntries>
