@@ -8,10 +8,15 @@ function Get-FlexRadio {
 	[CmdletBinding(DefaultParameterSetName = "p0")]
 	param(
 		[Parameter(ParameterSetName = "p0", Position = 0, ValueFromPipeline = $true)]
+		[Parameter(ParameterSetName = "p1", Position = 0, ValueFromPipeline = $true)]
+		[Parameter(ParameterSetName = "p2", Position = 0, ValueFromPipeline = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName = "p0")]
-		[switch]$Discover
+		[Parameter(ParameterSetName = "p1")]
+		[switch]$LanOnly,
+
+		[Parameter(ParameterSetName = "p2")]
+		[switch]$WanOnly
 	)
 
 	begin { }
@@ -21,13 +26,22 @@ function Get-FlexRadio {
 		$found = $false
 
 		while (($count -le 10) -and !$found) {
-			# try to discover FlexRadios on the network
-			if ($discover -or (-not $global:flexradios)) {
-				$global:FlexRadios = [flex.smoothlake.flexlib.api]::RadioList
+			$global:FlexRadios = @()
+
+			if ((!$global:FlexWanOnly -and !$WanOnly) -or $LanOnly) {
+				$global:FlexRadios += [flex.smoothlake.flexlib.api]::RadioList | ForEach-Object { $_ }
+			}
+			
+			if (!$LanOnly) {
+				foreach ($radio in $global:WanFlexRadios) {
+					if (($global:FlexRadios).Serial -NotContains $radio.Serial) {
+						$global:FlexRadios += $radio
+					}
+				}
 			}
 
-			if (-not $global:flexradios) {
-				write-verbose "No FlexRadios found, searching ($count of 10) ..."
+			if (!$global:FlexRadios) {
+				write-verbose "No FlexRadios found, retrying ($count of 10) ..."
 
 				start-sleep -milliseconds 250
 				$count++
@@ -37,25 +51,23 @@ function Get-FlexRadio {
 			}
 		}
 
+		if (!$global:FlexRadios) {
+			return
+		}
+
 		if ($Serial) {
 			$global:FlexRadios | Where-Object { $_.serial -eq $Serial }
-			$global:WanFlexRadios | Where-Object { $_.serial -eq $Serial }
 		}
-		elseif ($global:FlexRadios) {
+		else {
 			# using for loop to prevent modified collection exception when using pipeline
 			for ($i = 0; $i -lt $global:FlexRadios.count; $i++) {
 				$global:FlexRadios[$i]
 			}
 		}
-
-		if ($global:WanFlexRadios) {
-		$global:WanFlexRadios
-		}
 	}
 
 	end { }
 }
-
 
 function Connect-FlexRadio {
 	[CmdletBinding(DefaultParameterSetName = "p0",
@@ -1138,6 +1150,5 @@ function Uninstall-FlexGPS {
 			}
 		}
 	}
-
 	end { }
 }

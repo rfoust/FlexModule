@@ -90,7 +90,8 @@ function Connect-FlexSmartLink {
 
 function Add-FlexWanServer($event) {
 	$global:FlexWan = $event
-	$global:WanFlexRadios = $event.SourceArgs
+	$global:WanFlexRadios = @()
+	$global:WanFlexRadios += ($event.SourceArgs)[0] | ForEach-Object { $_ }
 }
 
 function Convert-FromBase64StringWithNoPadding([string]$data) {

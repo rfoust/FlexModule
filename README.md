@@ -2,7 +2,7 @@
 
 This is a Powershell module for FlexRadio 6000 series amateur radios. Note that this project is NOT maintained by FlexRadio Systems.
 
-More information about FlexRadio can be found on their website: [http://www.flexradio.com]
+More information about FlexRadio can be found on their website: [<http://www.flexradio.com>]
 
 ## Installation
 
@@ -14,7 +14,8 @@ a little on your computer so that you can run scripts.
 
 ## Usage
 
-If you're running a recent version of Powershell, just run `Get-FlexRadio` and it should show your FlexRadio 6000 series radio.  Run `Connect-FlexRadio` to connect to it.
+If you're running a recent version of Powershell, just run `Get-FlexRadio` and it should show your FlexRadio 6000 series radio. Run `Connect-FlexRadio` to connect to it.  If you are operating remotely, you will need to first connect to SmartLink by running `Connect-FlexSmartLink`. If you haven't
+configured SmartLink yet, please do so using SmartSDR.
 
 ```Powershell
 PS C:\> Get-FlexRadio
@@ -76,6 +77,7 @@ PS C:\>
 To see all of the cmdlets available in this module, run `Get-FlexCommand`. The commands currently available are:
 
 * Connect-FlexRadio
+* Connect-FlexSmartLink
 * Disable-FlexLog
 * Disable-FlexTNF
 * Disconnect-FlexRadio
@@ -111,7 +113,7 @@ To see all of the cmdlets available in this module, run `Get-FlexCommand`. The c
 
 ## Conclusion
 
-If you have questions, feel free to ask (rfoust at gmail.com). If you are interested in a feature that I haven't implemented yet, let me know and I'll probably make it a priority. This is a "proof-of-concept" and "for-fun" project.
+If you have questions, feel free to ask (rfoust at gmail.com).
 
 Enjoy!
 
