@@ -199,7 +199,7 @@
             <TableControl>
                 <TableHeaders>
                    <TableColumnHeader>
-                      <Label>Index</Label>
+                      <Label>Letter</Label>
                       <Width>15</Width>
                       <Alignment>left</Alignment>
                    </TableColumnHeader>
@@ -229,7 +229,7 @@
                         <Wrap/>
                         <TableColumnItems>
                             <TableColumnItem>
-                                <PropertyName>Index</PropertyName>
+                                <PropertyName>Letter</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Active</PropertyName>
@@ -265,7 +265,7 @@
                         </EntrySelectedBy>
                         <ListItems>
                             <ListItem>
-                                <PropertyName>Index</PropertyName>
+                                <PropertyName>Letter</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>Active</PropertyName>
@@ -284,7 +284,7 @@
                     <ListEntry>
                         <ListItems>
                             <ListItem>
-                                <PropertyName>Index</PropertyName>
+                                <PropertyName>Letter</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>Active</PropertyName>
@@ -316,7 +316,7 @@
                 <WideEntries>
                     <WideEntry>
                         <WideItem>
-                            <PropertyName>Index</PropertyName>
+                            <PropertyName>Letter</PropertyName>
                         </WideItem>
                     </WideEntry>
                     <WideEntry>
@@ -324,7 +324,7 @@
                             <TypeName>Flex.Smoothlake.FlexLib.Slice</TypeName>
                         </EntrySelectedBy>
                         <WideItem>
-                            <PropertyName>Index</PropertyName>
+                            <PropertyName>Letter</PropertyName>
                             <FormatString>[{0}]</FormatString>
                         </WideItem>
                     </WideEntry>

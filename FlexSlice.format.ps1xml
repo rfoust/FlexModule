@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?> 
+<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
     <SelectionSets>
         <SelectionSet>
@@ -9,7 +9,7 @@
         </SelectionSet>
     </SelectionSets>
 
-    
+
     <!-- ################ VIEW DEFINITIONS ################ -->
 
     <ViewDefinitions>
@@ -19,13 +19,13 @@
                 <SelectionSetName>DefaultView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Index</PropertyName> 
-                <CustomControlName>DefaultView-GroupingFormat</CustomControlName>  
+                <PropertyName>Letter</PropertyName>
+                <CustomControlName>DefaultView-GroupingFormat</CustomControlName>
             </GroupBy>
             <TableControl>
                 <TableHeaders>
                    <TableColumnHeader>
-                      <Label>Index</Label>
+                      <Label>Letter</Label>
                       <Width>15</Width>
                       <Alignment>left</Alignment>
                    </TableColumnHeader>
@@ -55,7 +55,7 @@
                         <Wrap/>
                         <TableColumnItems>
                             <TableColumnItem>
-                                <PropertyName>Index</PropertyName>
+                                <PropertyName>Letter</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Serial</PropertyName>
@@ -80,8 +80,8 @@
                 <SelectionSetName>DefaultView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Index</PropertyName> 
-                <CustomControlName>DefaultView-GroupingFormat</CustomControlName>  
+                <PropertyName>Letter</PropertyName>
+                <CustomControlName>DefaultView-GroupingFormat</CustomControlName>
             </GroupBy>
             <ListControl>
                 <ListEntries>
@@ -91,7 +91,7 @@
                         </EntrySelectedBy>
                         <ListItems>
                             <ListItem>
-                                <PropertyName>Index</PropertyName>
+                                <PropertyName>Letter</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>Serial</PropertyName>
@@ -110,7 +110,7 @@
                     <ListEntry>
                         <ListItems>
                             <ListItem>
-                                <PropertyName>Index</PropertyName>
+                                <PropertyName>Letter</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>Serial</PropertyName>
@@ -135,14 +135,14 @@
                 <SelectionSetName>DefaultView</SelectionSetName>
             </ViewSelectedBy>
             <GroupBy>
-                <PropertyName>Index</PropertyName> 
-                <CustomControlName>DefaultView-GroupingFormat</CustomControlName>  
+                <PropertyName>Letter</PropertyName>
+                <CustomControlName>DefaultView-GroupingFormat</CustomControlName>
             </GroupBy>
             <WideControl>
                 <WideEntries>
                     <WideEntry>
                         <WideItem>
-                            <PropertyName>Index</PropertyName>
+                            <PropertyName>Letter</PropertyName>
                         </WideItem>
                     </WideEntry>
                     <WideEntry>
@@ -150,7 +150,7 @@
                             <TypeName>Flex.Smoothlake.FlexLib.Slice</TypeName>
                         </EntrySelectedBy>
                         <WideItem>
-                            <PropertyName>Index</PropertyName>
+                            <PropertyName>Letter</PropertyName>
                             <FormatString>[{0}]</FormatString>
                         </WideItem>
                     </WideEntry>
