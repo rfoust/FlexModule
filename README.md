@@ -1,12 +1,18 @@
 # FlexModule
 
+## UPDATE 9/11/2019
+
+Basic support has been added for v3.0.27. Additional features need to be added for full v3 functionality. But, the basics should work for a single client that is connected to the radio. I need to resolve some local network issues on my end to fully develop and test multiple clients and Smartlink but I hope to do this in the near future.
+
+## Introduction
+
 This is a Powershell module for FlexRadio 6000 series amateur radios. Note that this project is NOT maintained by FlexRadio Systems.
 
 More information about FlexRadio can be found on their website: [<http://www.flexradio.com>]
 
 ## Installation
 
-To install -- Clone this repo to an appropriate Modules folder in Powershell, for example, in your `Documents\WindowsPowerShell\Modules\FlexModule` folder.
+To install -- Clone this repo to an appropriate Modules folder in Powershell, for example, in your `Documents\WindowsPowerShell\Modules\FlexModule` folder, or if you are using the newer Powershell Core, `Documents\PowerShell\Modules\FlexModule`.
 
 If this is your first time running scripts in Powershell, you may also need to launch a Powershell session as Administrator (Right click
 the Powershell icon, select "Run as administrator") and then type `Set-ExecutionPolicy RemoteSigned`. This will open up the security settings
