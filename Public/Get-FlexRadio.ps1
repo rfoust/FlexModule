@@ -2,17 +2,17 @@
 # there is a global variable $global:flexradios that will contain all flex radios found
 # the various module cmdlets should be able to get/set on that object by finding a matching serial number.
 function Get-FlexRadio {
-	[CmdletBinding(DefaultParameterSetName = "p0")]
+	[CmdletBinding(DefaultParameterSetName = "Default")]
 	param(
-		[Parameter(ParameterSetName = "p0", Position = 0, ValueFromPipeline = $true)]
-		[Parameter(ParameterSetName = "p1", Position = 0, ValueFromPipeline = $true)]
-		[Parameter(ParameterSetName = "p2", Position = 0, ValueFromPipeline = $true)]
+		[Parameter(ParameterSetName = "Default", Position = 0, ValueFromPipeline = $true)]
+		[Parameter(ParameterSetName = "LanOnly", Position = 0, ValueFromPipeline = $true)]
+		[Parameter(ParameterSetName = "WanOnly", Position = 0, ValueFromPipeline = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName = "p1")]
+		[Parameter(ParameterSetName = "LanOnly")]
 		[switch]$LanOnly,
 
-		[Parameter(ParameterSetName = "p2")]
+		[Parameter(ParameterSetName = "WanOnly")]
 		[switch]$WanOnly
 	)
 

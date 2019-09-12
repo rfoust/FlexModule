@@ -1,195 +1,195 @@
 function Set-FlexRadio {
-	[CmdletBinding(DefaultParameterSetName = "p0",
+	[CmdletBinding(DefaultParameterSetName = "Default",
 		SupportsShouldProcess = $true,
 		ConfirmImpact = "Low")]
 	param(
-		[Parameter(ParameterSetName = "p0", Position = 0, ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName = "Default", Position = 0, ValueFromPipelineByPropertyName = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$ACCOn,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$AMCarrierLevel,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$APFGain,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$APFMode,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$APFQFactor,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$BinauralRX,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[double]$CalFreq,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[string]$Callsign,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$CompanderLevel,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CompanderOn,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CWBreakIn,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$CWDelay,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CWIambic,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CWIambicModeA,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CWIambicModeB,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CWLEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$CWPitch,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CWSidetone,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$CWSpeed,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$CWSwapPaddles,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$DelayTX,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[string]$DAXOn,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$FreqErrorPPB,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$FullDuplexEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$HeadphoneGain,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$HeadphoneMute,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$HWAlcEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$LineoutGain,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$LineoutMute,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$MetInRX,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$MicBias,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$MicBoost,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$MicLevel,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$Mox,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[string]$Nickname,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$RemoteOnEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$RFPower,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[string]$Screensaver,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$ShowTxInWaterfall,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$SimpleVOXEnable,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$SimpleVOXLevel,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$SimpleVOXDelay,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$SnapTune,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$SpeechProcessorEnable,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[uint32]$SpeechProcessorLevel,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$SSBPeakControlEnable,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$StartOffsetEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$SyncCWX,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$TNFEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$TunePower,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$TXCWMonitorGain,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$TXSBMonitorGain,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$TXCWMonitorPan,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$TXSBMonitorPan,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$TXFilterLow,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[int]$TXFilterHigh,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$TXMonitor,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$TXReqACCEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$TXReqACCPolarity,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$TXReqRCAEnabled,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$TXReqRCAPolarity,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Default")]
 		[bool]$TXTune
 	)
 
@@ -198,7 +198,7 @@ function Set-FlexRadio {
 	process {
 		if (-not $Serial) {
 			if ($global:FlexRadios.count -eq 1) {
-				write-verbose "One FlexRadio found. Using it."
+				Write-Verbose "[Set-FlexRadio] One FlexRadio found. Using it."
 				$serial = $global:FlexRadios[0].serial
 			}
 			else {
@@ -209,16 +209,16 @@ function Set-FlexRadio {
 		foreach ($radio in $Serial) {
 			$radioObj = $global:FlexRadios | Where-Object { $_.serial -eq $Serial }
 
-			write-verbose "Serial: $($radioObj.serial)"
+			Write-Verbose "[Set-FlexRadio] Serial: $($radioObj.serial)"
 
 			if (-not $radioObj.serial) {
 				continue
 			}
 
-			write-verbose "Radio connected: $($radioObj.connected)"
+			Write-Verbose "[Set-FlexRadio] Radio connected: $($radioObj.connected)"
 
 			if ($radioObj.Connected -eq $false) {
-				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use connect-flexradio to establish a new connection."
+				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use Connect-FlexRadio to establish a new connection."
 			}
 
 			if ($PSBoundParameters.ContainsKey('AccOn') -and ($ACCOn -ne $radioObj.AccOn)) {

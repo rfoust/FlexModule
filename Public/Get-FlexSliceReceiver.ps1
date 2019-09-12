@@ -1,19 +1,23 @@
 function Get-FlexSliceReceiver {
-	[CmdletBinding(DefaultParameterSetName = "p0")]
+	[CmdletBinding(DefaultParameterSetName = "Active")]
 
 	param(
-		[Parameter(ParameterSetName = "p0", Position = 0, ValueFromPipelineByPropertyName = $true)]
-		[Parameter(ParameterSetName = "p1", Position = 0, ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName = "Active", Position = 0, ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName = "Inactive", Position = 0, ValueFromPipelineByPropertyName = $true)]
+		[string]$Letter,
+
+		[Parameter(ParameterSetName = "Active", ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName = "Inactive", ValueFromPipelineByPropertyName = $true)]
 		[string]$Serial,
 
-		[Parameter(ParameterSetName = "p0", Position = 1, ValueFromPipelineByPropertyName = $true)]
-		[Parameter(ParameterSetName = "p1", Position = 1, ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName = "Active", ValueFromPipelineByPropertyName = $true)]
+		[Parameter(ParameterSetName = "Inactive", ValueFromPipelineByPropertyName = $true)]
 		[int]$Index,
 
-		[Parameter(ParameterSetName = "p0")]
+		[Parameter(ParameterSetName = "Active")]
 		[switch]$Active,
 
-		[Parameter(ParameterSetName = "p1")]
+		[Parameter(ParameterSetName = "Inactive")]
 		[switch]$Inactive
 	)
 
@@ -21,10 +25,10 @@ function Get-FlexSliceReceiver {
 
 	process {
 		if (-not $Serial) {
-			$radios = get-FlexRadio
+			$radios = Get-FlexRadio
 
 			if ($radios.count -eq 1) {
-				write-verbose "One FlexRadio found. Using it."
+				Write-Verbose "[Get-FlexSliceReceiver] One FlexRadio found. Using it."
 				$Serial = $radios[0].serial
 			}
 			else {
@@ -33,31 +37,34 @@ function Get-FlexSliceReceiver {
 		}
 
 		foreach ($radio in $Serial) {
-			$radioObj = get-FlexRadio -Serial:$radio
+			$radioObj = Get-FlexRadio -Serial:$radio
 
-			write-verbose "Serial: $($radioObj.serial)"
+			Write-Verbose "[Get-FlexSliceReceiver] Serial: $($radioObj.serial)"
 
 			if (-not $radioObj.serial) {
 				continue
 			}
 
-			write-verbose "Radio connected: $($radioObj.connected)"
+			Write-Verbose "[Get-FlexSliceReceiver] Radio connected: $($radioObj.connected)"
 
 			if ($radioObj.Connected -eq $false) {
-				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use connect-flexradio to establish a new connection."
+				throw "Not connected to $($radioObj.model): $($radioObj.serial). Use Connect-FlexRadio to establish a new connection."
 			}
 
 			if (-not $radioObj.slicelist) {
-				write-warning "No slices found! SmartSDR may not be running."
+				Write-Warning "[Get-FlexSliceReceiver] No slices found! SmartSDR may not be running."
 			}
 
 			$slices = $null
 
 			if ($PSBoundParameters.ContainsKey('Index') -and ($Index -ge 0)) {
-				$slices = $radioObj.SliceList | Where-Object { $_.index -eq $Index}
+				$slices = $radioObj.SliceList | Where-Object { $_.index -eq $Index }
+			}
+			elseif ($PSBoundParameters.ContainsKey('Letter')) {
+				$slices = $radioObj.SliceList | Where-Object { $_.Letter -eq $Letter }
 			}
 			else {
-				$slices = $radioObj.SliceList | Sort-Object index
+				$slices = $radioObj.SliceList | Sort-Object Letter
 			}
 
 			if ($PSBoundParameters.ContainsKey('Active')) {
